@@ -12,7 +12,7 @@ public class AddBookFasada implements FasadaToAdd{
         String tytul = new TextInputDialogBuilder()
                 .setTitle("Dodaj")
                 .setDescription("Tytuł")
-                .setValidationPattern(Pattern.compile("[a-zA-Z]*"),"wpisz tytuł")
+                .setValidationPattern(Pattern.compile("[a-zA-Z0-9]*"),"wpisz tytuł")
                 .build()
                 .showDialog(textGUI);
         return tytul;

@@ -61,11 +61,13 @@ public class Book {
         Faker faker = new Faker();
         String autor = faker.name().fullName();//losowanie autora
         String title = faker.book().title();//losowy tytuł książki
-        int cena = random.nextInt() * 25;
+        int cena = (int) Double.parseDouble(String.valueOf(Math.pow(random.nextDouble() * 25,2)));
+        while(cena < 0){
+            cena = (int) Double.parseDouble(String.valueOf(Math.pow(random.nextDouble() * 25,2)));
+        }
         int rok_wydania = random.nextInt(2020 - 1800) + 1800;//(max-min)+min
         int ilosc_na_stanie = random.nextInt(70);
         ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
-
         return new Book(title,autor,rok_wydania,cena,ilosc_na_stanie);
     }
 }

@@ -13,8 +13,10 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.sun.prism.paint.Color;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -43,6 +45,9 @@ class Terminala {
         prawy.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(prawy.withBorder(Borders.singleLine("Lista studentów i książek")));
 
+        //użycie singletona
+        KsiegarniaSingleton ksiegarniaSingleton = KsiegarniaSingleton.getInstance();
+
         //labele w którcyh nic nie ma aby troche uporządkować wygląd
         final Label spacja = new Label(" ");
         final Label spacja2 = new Label(" ");
@@ -58,11 +63,10 @@ class Terminala {
         prawy.addComponent(spacja);
         prawy.addComponent(table2_ksiazka);
 
+        Label stanlabel = new Label("Stan magazynu");
+
         table_student.setVisibleRows(7);
         table2_ksiazka.setVisibleRows(7);
-
-        //użycie singletona
-        KsiegarniaSingleton ksiegarniaSingleton = KsiegarniaSingleton.getInstance();
 
         Random random = new Random();
         BuilderKsiazki builderKsiazki = new BuilderKsiazki();
@@ -85,6 +89,14 @@ class Terminala {
         for (Book ksiazka : ksiazki){
             String prize = Double.toString(ksiazka.getPrize());
             table2_ksiazka.getTableModel().addRow(ksiazka.getTitle(), ksiazka.getAutor(), prize);
+            //początkowe inicjowanie koloru wskaźnika
+            if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+                stanlabel.setBackgroundColor(new TextColor.RGB(0,255,0));
+            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
+                stanlabel.setBackgroundColor(new TextColor.RGB(255,255,0));
+            }else{
+                stanlabel.setBackgroundColor(new TextColor.RGB(255,0,0));
+            }
         }
 
         //pełne informacje na temant studenta
@@ -160,14 +172,26 @@ class Terminala {
 
         //dodawanie książki
         new Button("Dodaj książkę", new Runnable() {
+            //inicjalizacja stanu
+            Stan stan;
             @Override
             public void run() {
                 Polacz polacz = new Polacz();
                 Book book;
                 book = polacz.dodajksiakze(textGUI,ksiegarniaSingleton);
-                ksiazki.add(book);
-                String cena = Integer.toString(book.getPrize());
-                table2_ksiazka.getTableModel().addRow(book.getTitle(),book.getAutor(),cena);
+                if(book != null){
+                    ksiazki.add(book);
+                    String cena = Integer.toString(book.getPrize());
+                    table2_ksiazka.getTableModel().addRow(book.getTitle(),book.getAutor(),cena);
+                    if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+                        stan = new StanPelnoMiejsca(stanlabel);
+                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
+                        stan = new StanUwazajNailosc(stanlabel);
+                    }else{
+                        stan = new StanBrakMiejsca(stanlabel);
+                    }
+                    stan.color();
+                }
             }
         }).addTo(lewy);
 
@@ -475,6 +499,17 @@ class Terminala {
         BasicWindow window = new BasicWindow();
         window.setComponent(panel.withBorder(Borders.singleLine("Panel Główny")));
 
+        new Button("Ilość wolnych miejsc", new Runnable() {
+            @Override
+            public void run() {
+                ksiegarniaSingleton.wolne_miejsce(textGUI);
+            }
+        }).addTo(lewy);
+
+        //dodanie labelu stanu do ilosci w magazynie
+        stanlabel.addTo(lewy);
+
+
         //przycisk do zamknięcia terminala
         new Button("Wyjście", new Runnable() {
             @Override
@@ -484,13 +519,6 @@ class Terminala {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }).addTo(lewy);
-
-        new Button("Ilość wolnych miejsc", new Runnable() {
-            @Override
-            public void run() {
-                ksiegarniaSingleton.wolne_miejsce(textGUI);
             }
         }).addTo(lewy);
 

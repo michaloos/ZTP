@@ -1,9 +1,12 @@
 package com.company;
 
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 
 import java.util.regex.Pattern;
+
+import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
 public interface FasadaToAdd {
     String dodaj_imie_tytul(WindowBasedTextGUI textGUI);
@@ -34,6 +37,15 @@ class Polacz{
         int rok = bookFasada.dodaj_indeks_rok(textGUI);
         int cena = bookFasada.dodaj_rok_studiow_cena(textGUI);
         int ilosc_na_stanie = bookFasada.dodaj_iloscwyp_ilosc_nastanie(textGUI);
+        if(ilosc_na_stanie > ksiegarniaSingleton.ilosc_wolynch_miejsc()){
+            new MessageDialogBuilder()
+                    .setTitle("Coś poszło nie tak")
+                    .setText("Nie będzie miejsca na tyle książek!")
+                    .addButton(OK)
+                    .build()
+                    .showDialog(textGUI);
+            return  null;
+        }
         Book book = Fabryka.dodajksiazke(tytul,autor,rok,cena,ilosc_na_stanie);
         ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
         return book;
