@@ -1,0 +1,38 @@
+package com.company;
+
+import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+
+import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
+
+public class KsiegarniaSingleton {
+    private int miejsce_w_magazynie_i_na_polkach;
+    private static KsiegarniaSingleton ksiegarniaSingleton = new KsiegarniaSingleton();
+    private KsiegarniaSingleton(){
+        this.miejsce_w_magazynie_i_na_polkach = 3000;
+    }
+    public static KsiegarniaSingleton getInstance(){
+        return ksiegarniaSingleton;
+    }
+    public int ilosc_wolynch_miejsc(){
+        return miejsce_w_magazynie_i_na_polkach;
+    }
+
+    public void wolne_miejsce(WindowBasedTextGUI textGUI){
+        new MessageDialogBuilder()
+                .setTitle("Potwierdzenie")
+                .setText("Tyle jest jeszcze miejsca:\n" + miejsce_w_magazynie_i_na_polkach)
+                .addButton(OK)
+                .build()
+                .showDialog(textGUI);
+    }
+
+    public void update_miejsca(int ilosc){
+        if(ilosc > 0){
+            miejsce_w_magazynie_i_na_polkach = miejsce_w_magazynie_i_na_polkach + ilosc;
+        }else{
+            miejsce_w_magazynie_i_na_polkach = miejsce_w_magazynie_i_na_polkach + ilosc;
+            //bo jak wrzucam -2 i tu bedzie - to razem da plus
+        }
+    }
+}
