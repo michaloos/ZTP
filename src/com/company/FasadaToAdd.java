@@ -27,7 +27,6 @@ class Polacz{
         int rok_studiow = studentFasada.dodaj_rok_studiow_cena(textGUI);
         int ilosc_wyporz = studentFasada.dodaj_iloscwyp_ilosc_nastanie(textGUI);
         Student student = Fabryka.dodajStudenta(imie,nazwisko,indeks,rok_studiow,ilosc_wyporz);
-
         return student;
     }
 
