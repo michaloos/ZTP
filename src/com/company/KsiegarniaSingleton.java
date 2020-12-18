@@ -33,11 +33,6 @@ public class KsiegarniaSingleton {
     }
 
     public void update_miejsca(int ilosc){
-        if(ilosc > 0){
             miejsce_w_magazynie_i_na_polkach = miejsce_w_magazynie_i_na_polkach + ilosc;
-        }else{
-            miejsce_w_magazynie_i_na_polkach = miejsce_w_magazynie_i_na_polkach + ilosc;
-            //bo jak wrzucam -2 i tu bedzie - to razem da plus
-        }
     }
 }

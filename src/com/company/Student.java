@@ -1,10 +1,16 @@
 package com.company;
 
 import com.github.javafaker.Faker;
+import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
+import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
+import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 
 import java.util.*;
+import java.util.regex.Pattern;
+
+import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
 public class Student {
     private String name;
@@ -89,45 +95,76 @@ public class Student {
         }
     }
 
-    //narazie iterator nie działa, ale z tego co rozumiem w tym
-    // przypadku jakim jak chciałem go użyć to by i tak niedziałał
-    /*static class ZwyklyIterator implements Iterator<Student> {
-
-        List<Student> list;
-        private int indeks;
-        private int i;
-        public ZwyklyIterator(List<Student> lista,int numer){
-            list = new ArrayList<>(lista);
-            this.indeks = numer;
-            this.i = 0;
-        }
-
-        @Override
-        public boolean hasNext() {
-            if(list.get(i) == null){
-                System.out.println(0);
-                return false;
-            }else {
-                System.out.println(1);
-                return true;
-            }
-        }
-
-        @Override
-        public Student next() {
-            if(list.get(i).getNr_ideksu() == indeks){
-                System.out.println(2);
-                System.out.println(list.get(i).getNr_ideksu());
-                System.out.println(indeks);
-                System.out.println(i);
-                System.out.println(list.get(i));
-                return list.get(i);
+    public void SzukajStudenta(WindowBasedTextGUI textGUI, TextBox szukaj_indeks, Table<String> table_student, List<Student> dane_studentow){
+        if(dane_studentow.isEmpty()){
+            new MessageDialogBuilder()
+                    .setTitle("Informacja")
+                    .setText("Nie masz czego szukać!\nBrak studentów na liście")
+                    .addButton(OK)
+                    .build()
+                    .showDialog(textGUI);
+        }else{
+            String x = szukaj_indeks.getText();
+            if(x.equals("")){
+                new MessageDialogBuilder()
+                        .setTitle("Coś poszło nie tak")
+                        .setText("Nic nie zostało wpisane\ndo pola wyszukiwania")
+                        .addButton(OK)
+                        .build()
+                        .showDialog(textGUI);
             }else{
-                i++;
-                System.out.println(33);
-                return null;
+                table_student.getTableModel().clear();
+                int numer = Integer.parseInt(szukaj_indeks.getText());
+                boolean bool = false;
+                String imie = null;
+                String nazwisko = null;
+                for(Student student : dane_studentow){
+                    if(numer == student.getNr_ideksu()){
+                        bool = true;
+                        imie = student.getName();
+                        nazwisko = student.getNazwisko();
+                    }
+                }
+                if(bool){
+                    String numerind = Integer.toString(numer);
+                    table_student.getTableModel().addRow(imie,nazwisko,numerind);
+                }
             }
         }
     }
-    public Iterator<Student> zwyklyIterator(List<Student> lista,int numer){return new ZwyklyIterator(lista, numer);}*/
+
+    public void UsunStudenta(WindowBasedTextGUI textGUI,List<Student> dane_studentow, Table<String> table_student){
+        if(dane_studentow.isEmpty()){
+            new MessageDialogBuilder()
+                    .setTitle("Informacja")
+                    .setText("Nie masz kogo usunąć!\nBrak studentów na liście")
+                    .addButton(OK)
+                    .build()
+                    .showDialog(textGUI);
+        }else{
+            String nrindeks = new TextInputDialogBuilder()
+                    .setTitle("Usun")
+                    .setDescription("Poprzez numer indeksu")
+                    .setValidationPattern(Pattern.compile("[0-9]*"),"wpisz numer indeksu")
+                    .build()
+                    .showDialog(textGUI);
+            int indeksnr = Integer.parseInt(nrindeks);
+            boolean usun = false;
+            int studnr = 0;
+            for (Student student : dane_studentow) {
+                int numerindeksuint = student.getNr_ideksu();
+                studnr++;
+                if (numerindeksuint == indeksnr) {
+                    usun = true;
+                    break;
+                }
+            }
+            if(usun){
+                table_student.getTableModel().removeRow(studnr - 1);
+                dane_studentow.remove(studnr - 1);
+                table_student.setVisibleRows(7);
+                table_student.getRenderer();
+            }
+        }
+    }
 }
