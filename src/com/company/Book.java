@@ -79,7 +79,7 @@ public class Book {
         return new Book(title,autor,rok_wydania,cena,ilosc_na_stanie);
     }
 
-    public void UsunKsiążkęIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka, KsiegarniaSingleton ksiegarniaSingleton){
+    public void UsunKsiazkeIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka, KsiegarniaSingleton ksiegarniaSingleton){
         String tytul = new TextInputDialogBuilder()
                 .setTitle("Usuń wszystkie egzemplarze")
                 .setDescription("Podaj tytuł")
@@ -136,14 +136,12 @@ public class Book {
                     .setValidationPattern(Pattern.compile("[a-zA-Z0-9]*"),"podaj autora")
                     .build()
                     .showDialog(textGUI);
-            int ilosc_na_stanie = 0;
             for(Book ksiazka : ksiazki){
                 String tytul_ksiazki = ksiazka.getTitle();
                 String autor_ksiazki = ksiazka.getAutor();
                 if(tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)){
-                    ilosc_na_stanie = ksiazka.getCount();
-                    if(ilosc_na_stanie != 0){
-                        ksiazka.setCount(ilosc_na_stanie);
+                    if(ksiazka.getCount() != 0){
+                        ksiazka.setCount(ksiazka.getCount() - 1);
                         ksiegarniaSingleton.update_miejsca(-1);
                         break;
                     }

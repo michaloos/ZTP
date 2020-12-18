@@ -173,7 +173,7 @@ class Terminala {
         new Button("Usun ksiązkę", new Runnable() {
             @Override
             public void run() {
-                new Book().UsunKsiążkęIWszystkieJejEgzemplarze(textGUI,ksiazki,table2_ksiazka,ksiegarniaSingleton);
+                new Book().UsunKsiazkeIWszystkieJejEgzemplarze(textGUI,ksiazki,table2_ksiazka,ksiegarniaSingleton);
             }
         }).addTo(lewy);
 
