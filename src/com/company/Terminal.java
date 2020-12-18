@@ -241,6 +241,7 @@ class Terminala {
             }
         }).addTo(lewy);
 
+        //kończymy szukanie resetujemy "filtry"
         new Button("Zakończ szukanie", new Runnable() {
             @Override
             public void run() {
