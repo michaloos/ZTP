@@ -3,7 +3,9 @@ package com.company;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
+import com.googlecode.lanterna.gui2.table.Table;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
@@ -20,17 +22,19 @@ class Polacz{
     private AddStudentFasada studentFasada = new AddStudentFasada();
     private AddBookFasada bookFasada = new AddBookFasada();
 
-    public Student dodajstudenta(WindowBasedTextGUI textGUI){
+    public void dodajstudenta(WindowBasedTextGUI textGUI, Table<String> table_student, List<Student> dane_studentow){
         String imie = studentFasada.dodaj_imie_tytul(textGUI);
         String nazwisko = studentFasada.dodaj_nazwisko_autor(textGUI);
         int indeks = studentFasada.dodaj_indeks_rok(textGUI);
         int rok_studiow = studentFasada.dodaj_rok_studiow_cena(textGUI);
         int ilosc_wyporz = studentFasada.dodaj_iloscwyp_ilosc_nastanie(textGUI);
-        Student student = Fabryka.dodajStudenta(imie,nazwisko,indeks,rok_studiow,ilosc_wyporz);
-        return student;
+        Student student = new Student(imie,nazwisko,indeks,rok_studiow,ilosc_wyporz);
+        dane_studentow.add(student);
+        String stringindeks = Integer.toString(indeks);
+        table_student.getTableModel().addRow(imie,nazwisko,stringindeks);
     }
 
-    public Book dodajksiakze(WindowBasedTextGUI textGUI, KsiegarniaSingleton ksiegarniaSingleton){
+    public void dodajksiakze(WindowBasedTextGUI textGUI, KsiegarniaSingleton ksiegarniaSingleton, Table<String> table2_ksiazki, List<Book> ksiazki){
         String tytul = bookFasada.dodaj_imie_tytul(textGUI);
         String autor = bookFasada.dodaj_nazwisko_autor(textGUI);
         int rok = bookFasada.dodaj_indeks_rok(textGUI);
@@ -43,10 +47,12 @@ class Polacz{
                     .addButton(OK)
                     .build()
                     .showDialog(textGUI);
-            return  null;
+        }else{
+            Book book = new Book(tytul,autor,rok,cena,ilosc_na_stanie);
+            ksiazki.add(book);
+            String stringcena = Integer.toString(cena);
+            table2_ksiazki.getTableModel().addRow(tytul,autor,stringcena);
+            ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
         }
-        Book book = Fabryka.dodajksiazke(tytul,autor,rok,cena,ilosc_na_stanie);
-        ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
-        return book;
     }
 }

@@ -12,7 +12,7 @@ public class AddStudentFasada implements FasadaToAdd{
         String imie = new TextInputDialogBuilder()
                 .setTitle("Dodaj")
                 .setDescription("Imie")
-                .setValidationPattern(Pattern.compile("[a-zA-Z]*"),"wpisz imie")
+                .setValidationPattern(Pattern.compile("[a-zA-Z ]*"),"wpisz imie")
                 .build()
                 .showDialog(textGUI);
         return imie;
@@ -23,7 +23,7 @@ public class AddStudentFasada implements FasadaToAdd{
         String nazwisko = new TextInputDialogBuilder()
                 .setTitle("Dodaj")
                 .setDescription("Nazwisko")
-                .setValidationPattern(Pattern.compile("[a-zA-Z]*"),"wpisz nazwisko")
+                .setValidationPattern(Pattern.compile("[a-zA-Z ]*"),"wpisz nazwisko")
                 .build()
                 .showDialog(textGUI);
         return nazwisko;

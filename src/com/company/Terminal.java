@@ -118,16 +118,14 @@ class Terminala {
             }
         });
 
+        Factory elementfactory = new Factory();
+
         //dodawanie studenta
         new Button("Dodaj studenta", new Runnable() {
             @Override
             public void run() {
-                Polacz polacz = new Polacz();
-                Student student;
-                student = polacz.dodajstudenta(textGUI);
-                String indeks = Integer.toString(student.getNr_ideksu());
-                dane_studentow.add(student);
-                table_student.getTableModel().addRow(student.getName(),student.getNazwisko(),indeks);
+                Element element = elementfactory.getElement("Student");
+                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table_student);
             }
         }).addTo(lewy);
 
@@ -145,14 +143,10 @@ class Terminala {
             Stan stan;
             @Override
             public void run() {
-                Polacz polacz = new Polacz();
-                Book book;
-                book = polacz.dodajksiakze(textGUI,ksiegarniaSingleton);
-                if(book != null){
-                    ksiazki.add(book);
-                    String cena = Integer.toString(book.getPrize());
-                    table2_ksiazka.getTableModel().addRow(book.getTitle(),book.getAutor(),cena);
-                    if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+
+                Element element = elementfactory.getElement("Book");
+                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table2_ksiazka);
+                if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
                         stan = new StanPrawiePelnoMiejsca(stanlabel);
                     }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
                         stan = new StanUwazajNailosc(stanlabel);
@@ -165,7 +159,6 @@ class Terminala {
                     }
                     stan.color();
                     stan.tekst();
-                }
             }
         }).addTo(lewy);
 
