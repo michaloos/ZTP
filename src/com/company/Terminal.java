@@ -37,8 +37,8 @@ class Terminala {
         prawy.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(prawy.withBorder(Borders.singleLine("Lista studentów i książek")));
 
-        //użycie singletona jedne jedyne użycie get.instance
         KsiegarniaSingleton ksiegarniaSingleton = KsiegarniaSingleton.getInstance();
+        Ksiegarnia ksiegarnia = Ksiegarnia.getInstance();
 
         //labele w którcyh nic nie ma aby troche uporządkować wygląd
         final Label spacja = new Label(" ");
@@ -125,7 +125,7 @@ class Terminala {
             @Override
             public void run() {
                 Element element = elementfactory.getElement("Student");
-                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table_student);
+                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table_student,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -139,26 +139,10 @@ class Terminala {
 
         //dodawanie książki
         new Button("Dodaj książkę", new Runnable() {
-            //inicjalizacja stanu
-            Stan stan;
             @Override
             public void run() {
-
                 Element element = elementfactory.getElement("Book");
-                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table2_ksiazka);
-                if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                        stan = new StanPrawiePelnoMiejsca(stanlabel);
-                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                        stan = new StanUwazajNailosc(stanlabel);
-                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
-                        stan = new StanNieMaMiejscaNaNoweKsizki(stanlabel);
-                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
-                        stan = new StanBrakKsiazek(stanlabel);
-                    }else{
-                        stan = new StanBrakMiejsca(stanlabel);
-                    }
-                    stan.color();
-                    stan.tekst();
+                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table2_ksiazka,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -166,7 +150,7 @@ class Terminala {
         new Button("Usun ksiązkę", new Runnable() {
             @Override
             public void run() {
-                new Book().UsunKsiazkeIWszystkieJejEgzemplarze(textGUI,ksiazki,table2_ksiazka,ksiegarniaSingleton);
+                new Book().UsunKsiazkeIWszystkieJejEgzemplarze(textGUI,ksiazki,table2_ksiazka,ksiegarniaSingleton,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -174,7 +158,7 @@ class Terminala {
         new Button("Wyporzycz książkę", new Runnable() {
             @Override
             public void run() {
-                new Book().WyporzyczKsiazke(textGUI,ksiazki,ksiegarniaSingleton);
+                new Book().WyporzyczKsiazke(textGUI,ksiazki,ksiegarniaSingleton,stanlabel);
             }
         }).addTo(lewy);
 
@@ -182,7 +166,7 @@ class Terminala {
         new Button("Zwróć książkę", new Runnable() {
             @Override
             public void run() {
-                new Book().ZwrotKsiazki(textGUI,ksiazki,ksiegarniaSingleton);
+                new Book().ZwrotKsiazki(textGUI,ksiazki,ksiegarniaSingleton,stanlabel);
             }
         }).addTo(lewy);
 
@@ -190,7 +174,7 @@ class Terminala {
         new Button("Kup książkę", new Runnable() {
             @Override
             public void run() {
-                new Book().KupnoKsiazki(textGUI,ksiazki,ksiegarniaSingleton);
+                new Book().KupnoKsiazki(textGUI,ksiazki,ksiegarniaSingleton,stanlabel);
             }
         }).addTo(lewy);
         lewy.addComponent(spacja2);

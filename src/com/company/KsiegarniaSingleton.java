@@ -6,6 +6,24 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
 public class KsiegarniaSingleton {
+
+    /*private static class StanPelno extends Stan{
+
+        private static StanPelno instancja = new StanPelno();
+        private StanPelno(){}
+        public static Stan getInstance() { return instancja;}
+
+        @Override
+        public void color() {
+
+        }
+
+        @Override
+        public void tekst() {
+
+        }
+    }*/
+
     private int miejsce_w_magazynie_i_na_polkach;
     private static KsiegarniaSingleton ksiegarniaSingleton = new KsiegarniaSingleton();
     private KsiegarniaSingleton(){

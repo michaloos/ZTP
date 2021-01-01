@@ -1,6 +1,7 @@
 package com.company;
 
 import com.github.javafaker.Faker;
+import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
@@ -36,6 +37,7 @@ public class Book {
         this.count = count;
     }
 
+
     public String getTitle() {
         return title;
     }
@@ -64,7 +66,7 @@ public class Book {
                 '}';
     }
 
-    public Book Bookfake(KsiegarniaSingleton ksiegarniaSingleton){
+    public Book Bookfake(KsiegarniaSingleton ksiegarniaSingleton,Ksiegarnia ksiegarnia){
         Random random = new Random();
         Faker faker = new Faker();
         String autor = faker.name().fullName();//losowanie autora
@@ -76,10 +78,12 @@ public class Book {
         int rok_wydania = random.nextInt(2020 - 1800) + 1800;//(max-min)+min
         int ilosc_na_stanie = random.nextInt(70);
         ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
+        ksiegarnia.zmiejsz_ilosc_wolnego_miejsca(ilosc_na_stanie);
         return new Book(title,autor,rok_wydania,cena,ilosc_na_stanie);
     }
 
-    public void UsunKsiazkeIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka, KsiegarniaSingleton ksiegarniaSingleton){
+    public void UsunKsiazkeIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka,
+                                                    KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel,Ksiegarnia ksiegarnia){
         String tytul = new TextInputDialogBuilder()
                 .setTitle("Usuń wszystkie egzemplarze")
                 .setDescription("Podaj tytuł")
@@ -96,6 +100,7 @@ public class Book {
         boolean usun = false;
         int ksiazkanumer = 0;
         int ile_trzeba_zwolnic_miejsca = 0;
+        Stan stan;
         for(Book ksiazka : ksiazki){
             String tytul_ksiazki = ksiazka.getTitle();
             String autor_ksiazki = ksiazka.getAutor();
@@ -107,15 +112,29 @@ public class Book {
             }
         }
         if(usun){
-            ksiegarniaSingleton.update_miejsca(-ile_trzeba_zwolnic_miejsca);
+            ksiegarniaSingleton.update_miejsca(ile_trzeba_zwolnic_miejsca);
+            ksiegarnia.zwieksz_ilosc_wolnego_miejsca(ile_trzeba_zwolnic_miejsca);
             table2_ksiazka.getTableModel().removeRow(ksiazkanumer - 1);
             ksiazki.remove(ksiazkanumer - 1);
             table2_ksiazka.setVisibleRows(7);
             table2_ksiazka.getRenderer();
+            if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+                stan = new StanPrawiePusto(stanlabel);
+            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
+                stan = new StanZbalansowany(stanlabel);
+            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
+                stan = new StanPelno(stanlabel);
+            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
+                stan = new StanPusto(stanlabel);
+            }else{
+                stan = new StanPrawiePelno(stanlabel);
+            }
+            stan.color();
+            stan.tekst();
         }
     }
 
-    public void WyporzyczKsiazke(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton){
+    public void WyporzyczKsiazke(WindowBasedTextGUI textGUI, List<Book> ksiazki, KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel){
         if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
             new MessageDialogBuilder()
                     .setTitle("Informacja")
@@ -136,6 +155,7 @@ public class Book {
                     .setValidationPattern(Pattern.compile("[a-zA-Z0-9]*"),"podaj autora")
                     .build()
                     .showDialog(textGUI);
+            Stan stan;
             for(Book ksiazka : ksiazki){
                 String tytul_ksiazki = ksiazka.getTitle();
                 String autor_ksiazki = ksiazka.getAutor();
@@ -143,6 +163,19 @@ public class Book {
                     if(ksiazka.getCount() != 0){
                         ksiazka.setCount(ksiazka.getCount() - 1);
                         ksiegarniaSingleton.update_miejsca(-1);
+                        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+                            stan = new StanPrawiePusto(stanlabel);
+                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
+                            stan = new StanZbalansowany(stanlabel);
+                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
+                            stan = new StanPelno(stanlabel);
+                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
+                            stan = new StanPusto(stanlabel);
+                        }else{
+                            stan = new StanPrawiePelno(stanlabel);
+                        }
+                        stan.color();
+                        stan.tekst();
                         break;
                     }
                     else{
@@ -158,7 +191,7 @@ public class Book {
         }
     }
 
-    public void ZwrotKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton){
+    public void ZwrotKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel){
         if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()){
             new MessageDialogBuilder()
                     .setTitle("Informacja")
@@ -180,6 +213,7 @@ public class Book {
                     .build()
                     .showDialog(textGUI);
             int ilosc_na_stanie = 0;
+            Stan stan;
             for (Book ksiazka : ksiazki) {
                 String tytul_ksiazki = ksiazka.getTitle();
                 String autor_ksiazki = ksiazka.getAutor();
@@ -188,6 +222,19 @@ public class Book {
                     ilosc_na_stanie++;
                     ksiegarniaSingleton.update_miejsca(1);
                     ksiazka.setCount(ilosc_na_stanie);
+                    if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+                        stan = new StanPrawiePusto(stanlabel);
+                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
+                        stan = new StanZbalansowany(stanlabel);
+                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
+                        stan = new StanPelno(stanlabel);
+                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
+                        stan = new StanPusto(stanlabel);
+                    }else{
+                        stan = new StanPrawiePelno(stanlabel);
+                    }
+                    stan.color();
+                    stan.tekst();
                     new MessageDialogBuilder()
                             .setTitle("Potwierdzenie")
                             .setText("Książka została zwrócona")
@@ -200,7 +247,7 @@ public class Book {
         }
     }
 
-    public void KupnoKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton){
+    public void KupnoKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel){
         if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
             new MessageDialogBuilder()
                     .setTitle("Informacja")
@@ -222,6 +269,7 @@ public class Book {
                     .build()
                     .showDialog(textGUI);
             int ilosc_na_stanie = 0;
+            Stan stan;
             for(Book ksiazka : ksiazki){
                 String tytul_ksiazki = ksiazka.getTitle();
                 String autor_ksiazki = ksiazka.getAutor();
@@ -230,6 +278,20 @@ public class Book {
                     if(ilosc_na_stanie != 0){
                         ilosc_na_stanie = ksiazka.getCount() - 1;
                         ksiazka.setCount(ilosc_na_stanie);
+                        ksiegarniaSingleton.update_miejsca(1);
+                        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
+                            stan = new StanPrawiePusto(stanlabel);
+                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
+                            stan = new StanZbalansowany(stanlabel);
+                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
+                            stan = new StanPelno(stanlabel);
+                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
+                            stan = new StanPusto(stanlabel);
+                        }else{
+                            stan = new StanPrawiePelno(stanlabel);
+                        }
+                        stan.color();
+                        stan.tekst();
                         new MessageDialogBuilder()
                                 .setTitle("Potwierdzenie")
                                 .setText("Wkrótce dostaniesz dowód do zapłaty")

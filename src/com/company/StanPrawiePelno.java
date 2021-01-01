@@ -3,9 +3,9 @@ package com.company;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.Label;
 
-public class StanNieMaMiejscaNaNoweKsizki extends Stan{
+public class StanPrawiePelno extends Stan{
 
-    StanNieMaMiejscaNaNoweKsizki(Label label) {
+    StanPrawiePelno(Label label) {
         super(label);
     }
 
@@ -16,6 +16,6 @@ public class StanNieMaMiejscaNaNoweKsizki extends Stan{
 
     @Override
     public void tekst() {
-        labelstan.setText("W tym momencie nie ma\nmiejsca na nowe książki!");
+        labelstan.setText("Zaraz zabraknie miejsca\nna nowe książki");
     }
 }

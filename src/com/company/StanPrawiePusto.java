@@ -3,19 +3,19 @@ package com.company;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.Label;
 
-public class StanUwazajNailosc extends Stan{
+public class StanPrawiePusto extends Stan{
 
-    StanUwazajNailosc(Label label) {
+    StanPrawiePusto(Label label) {
         super(label);
     }
 
     @Override
     public void color() {
-        labelstan.setBackgroundColor(new TextColor.RGB(255,255,0));
+        labelstan.setBackgroundColor(new TextColor.RGB(0,255,0));
     }
 
     @Override
     public void tekst() {
-        labelstan.setText("Ilość książek umiarkowana");
+        labelstan.setText("Studentom zaraz zabraknie\nksiążek do czytania!");
     }
 }

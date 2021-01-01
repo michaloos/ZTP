@@ -8,6 +8,11 @@ abstract class Stan {
     Stan(Label label){
         this.labelstan = label;
     }
+
+    public Stan() {
+
+    }
+
     public abstract void color();
     public abstract void tekst();
 }

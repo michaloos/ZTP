@@ -1,5 +1,6 @@
 package com.company;
 
+import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.table.Table;
 
@@ -9,7 +10,7 @@ public class AddBook implements Element{
 
     @Override
     public void dodaj(WindowBasedTextGUI textGUI, KsiegarniaSingleton ksiegarniaSingleton,
-                      List<Student> listastudentow, List<Book> listaksiazki , Table<String> tablica) {
-        new Polacz().dodajksiakze(textGUI, ksiegarniaSingleton, tablica, listaksiazki);
+                      List<Student> listastudentow, List<Book> listaksiazki , Table<String> tablica, Label stanlabel,Ksiegarnia ksiegarnia) {
+        new Polacz().dodajksiakze(textGUI, ksiegarniaSingleton, tablica, listaksiazki,stanlabel,ksiegarnia);
     }
 }
