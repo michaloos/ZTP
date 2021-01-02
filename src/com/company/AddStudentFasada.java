@@ -7,28 +7,29 @@ import java.util.regex.Pattern;
 
 public class AddStudentFasada implements FasadaToAdd{
 
+    //proszenie użytkownika o imię bo dodajemy studenta
     @Override
     public String dodaj_imie_tytul(WindowBasedTextGUI textGUI) {
-        String imie = new TextInputDialogBuilder()
+        return new TextInputDialogBuilder()
                 .setTitle("Dodaj")
                 .setDescription("Imie")
                 .setValidationPattern(Pattern.compile("[a-zA-Z ]*"),"wpisz imie")
                 .build()
                 .showDialog(textGUI);
-        return imie;
     }
 
+    //proszenie użytownika o nazwisko studenta
     @Override
     public String dodaj_nazwisko_autor(WindowBasedTextGUI textGUI) {
-        String nazwisko = new TextInputDialogBuilder()
+        return new TextInputDialogBuilder()
                 .setTitle("Dodaj")
                 .setDescription("Nazwisko")
                 .setValidationPattern(Pattern.compile("[a-zA-Z ]*"),"wpisz nazwisko")
                 .build()
                 .showDialog(textGUI);
-        return nazwisko;
     }
 
+    //proszenie użytownika o numer indeksu studenta
     @Override
     public int dodaj_indeks_rok(WindowBasedTextGUI textGUI) {
         String indeks = new TextInputDialogBuilder()
@@ -37,10 +38,10 @@ public class AddStudentFasada implements FasadaToAdd{
                 .setValidationPattern(Pattern.compile("[0-9]*"),"wpisz indeks")
                 .build()
                 .showDialog(textGUI);
-        int indeksint = Integer.parseInt(indeks);
-        return indeksint;
+        return Integer.parseInt(indeks);
     }
 
+    //proszenie użytownika o rok studiów studenta
     @Override
     public int dodaj_rok_studiow_cena(WindowBasedTextGUI textGUI) {
         String rok = new TextInputDialogBuilder()
@@ -49,10 +50,10 @@ public class AddStudentFasada implements FasadaToAdd{
                 .setValidationPattern(Pattern.compile("[0-9]*"),"wpisz rok studiow")
                 .build()
                 .showDialog(textGUI);
-        int rokSt = Integer.parseInt(rok);
-        return rokSt;
+        return Integer.parseInt(rok);
     }
 
+    //proszenie użytownika o ilość wyporzyczonych książek studenta
     @Override
     public int dodaj_iloscwyp_ilosc_nastanie(WindowBasedTextGUI textGUI) {
         String ilosc = new TextInputDialogBuilder()
@@ -61,8 +62,7 @@ public class AddStudentFasada implements FasadaToAdd{
                 .setValidationPattern(Pattern.compile("[0-9]*"),"wpisz ilość wyporzyczonych książek")
                 .build()
                 .showDialog(textGUI);
-        int iloscwyporz = Integer.parseInt(ilosc);
-        return iloscwyporz;
+        return Integer.parseInt(ilosc);
     }
 
 }

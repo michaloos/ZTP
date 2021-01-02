@@ -8,10 +8,11 @@ public class BuilderKsiazki implements  Builder {
     List<Book> listaksiazek = new ArrayList<>();
     @Override
     public void createElement() {
-        Book book = new Book().Bookfake(KsiegarniaSingleton.getInstance(),Ksiegarnia.getInstance());
+        Book book = new Book().Bookfake(Ksiegarnia.getInstance());
         listaksiazek.add(book);
     }
 
+    //budowniczy zwraca listę utworzonych książek na początku do Directora
     public List<Book> pobierzliste(){
         return listaksiazek;
     }

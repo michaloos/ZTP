@@ -25,10 +25,12 @@ class Terminala {
         screen.startScreen();
 
         final WindowBasedTextGUI textGUI = new MultiWindowTextGUI(screen);
-        // Create panel to hold components
+        // tworzenie panelu do trzymania innych komponentów
         Panel panel = new Panel();;
         panel.setLayoutManager(new LinearLayout(Direction.HORIZONTAL));
 
+        //okno dzieli się na dwa panele, w jednym są tabele z listą studentów oraz listą książek
+        //a w drugim panule przyciski oraz inne komponetu do obsługi aplikacji
         Panel lewy = new Panel();
         panel.addComponent(lewy.withBorder(Borders.singleLine("Dostępne opcje")));
         lewy.setLayoutManager(new GridLayout(2));
@@ -37,7 +39,6 @@ class Terminala {
         prawy.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(prawy.withBorder(Borders.singleLine("Lista studentów i książek")));
 
-        KsiegarniaSingleton ksiegarniaSingleton = KsiegarniaSingleton.getInstance();
         Ksiegarnia ksiegarnia = Ksiegarnia.getInstance();
 
         //labele w którcyh nic nie ma aby troche uporządkować wygląd
@@ -49,6 +50,8 @@ class Terminala {
         //inicjalizacja tabel do wyświetlania informacji
         Table<String> table_student = new Table<String>("Imię", "Nazwisko", "Nr indeksu");
         Table<String> table2_ksiazka = new Table<String>("Tytuł","Autor","Cena");
+
+        //dodawanie labeli do komponentu
         lewy.addComponent(informacja);
         lewy.addComponent(spacja3);
         prawy.addComponent(table_student);
@@ -57,6 +60,7 @@ class Terminala {
 
         Label stanlabel = new Label("Stan magazynu");
 
+        //ustawianie dla dwóch tabel ile ma być wyświetlanych wierszy
         table_student.setVisibleRows(7);
         table2_ksiazka.setVisibleRows(7);
 
@@ -68,7 +72,7 @@ class Terminala {
             builderKsiazki.createElement();
             builderStudenci.createElement();
         }
-        ksiegarniaSingleton.update_miejsca(-50);//no bo tyle jest początkowych książek
+
         List<Student> dane_studentow = new ArrayList<Student>(builderStudenci.pobierzliste());
         List<Book> ksiazki = new ArrayList<Book>(builderKsiazki.pobierzliste());
         //dodawanie wstępnych studentów
@@ -81,13 +85,7 @@ class Terminala {
             String prize = Double.toString(ksiazka.getPrize());
             table2_ksiazka.getTableModel().addRow(ksiazka.getTitle(), ksiazka.getAutor(), prize);
             //początkowe inicjowanie koloru wskaźnika
-            if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                stanlabel.setBackgroundColor(new TextColor.RGB(0,255,0));
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                stanlabel.setBackgroundColor(new TextColor.RGB(255,255,0));
-            }else{
-                stanlabel.setBackgroundColor(new TextColor.RGB(255,0,0));
-            }
+            ksiazka.inicjalizacja_labela(ksiegarnia,stanlabel);
         }
 
         //pełne informacje na temant studenta
@@ -95,12 +93,7 @@ class Terminala {
             @Override
             public void run() {
                 int i = table_student.getSelectedRow();
-                String imie = dane_studentow.get(i).getName();
-                String nazwisko = dane_studentow.get(i).getNazwisko();
-                String indeks = Integer.toString(dane_studentow.get(i).getNr_ideksu());
-                String rok_studiow = Integer.toString(dane_studentow.get(i).getRok_studiow());
-                String ilosc_wuporzyczen = Integer.toString(dane_studentow.get(i).getIlosc_wyporz_ksiazek());
-                new WypiszStudenta().wypisz(textGUI,imie,nazwisko,indeks,rok_studiow,ilosc_wuporzyczen);
+                new WypiszStudenta().wypisz(textGUI,table_student,i,dane_studentow,ksiazki);
             }
         });
 
@@ -109,15 +102,11 @@ class Terminala {
             @Override
             public void run() {
                 int j = table2_ksiazka.getSelectedRow();
-                String tytul = ksiazki.get(j).getTitle();
-                String autor = ksiazki.get(j).getAutor();
-                String rok = Integer.toString(ksiazki.get(j).getYear());
-                String cena = Double.toString(ksiazki.get(j).getPrize());
-                String count = Integer.toString(ksiazki.get(j).getCount());
-                new WypiszKsiazke().wypisz(textGUI,tytul,autor,rok,cena,count);
+                new WypiszKsiazke().wypisz(textGUI,table_student,j,dane_studentow,ksiazki);
             }
         });
 
+        //do metody fabrykującej
         Factory elementfactory = new Factory();
 
         //dodawanie studenta
@@ -125,7 +114,7 @@ class Terminala {
             @Override
             public void run() {
                 Element element = elementfactory.getElement("Student");
-                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table_student,stanlabel,ksiegarnia);
+                element.dodaj(textGUI,dane_studentow,ksiazki,table_student,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -142,7 +131,7 @@ class Terminala {
             @Override
             public void run() {
                 Element element = elementfactory.getElement("Book");
-                element.dodaj(textGUI,ksiegarniaSingleton,dane_studentow,ksiazki,table2_ksiazka,stanlabel,ksiegarnia);
+                element.dodaj(textGUI,dane_studentow,ksiazki,table2_ksiazka,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -150,7 +139,7 @@ class Terminala {
         new Button("Usun ksiązkę", new Runnable() {
             @Override
             public void run() {
-                new Book().UsunKsiazkeIWszystkieJejEgzemplarze(textGUI,ksiazki,table2_ksiazka,ksiegarniaSingleton,stanlabel,ksiegarnia);
+                new Book().UsunKsiazkeIWszystkieJejEgzemplarze(textGUI,ksiazki,table2_ksiazka,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -158,7 +147,7 @@ class Terminala {
         new Button("Wyporzycz książkę", new Runnable() {
             @Override
             public void run() {
-                new Book().WyporzyczKsiazke(textGUI,ksiazki,ksiegarniaSingleton,stanlabel);
+                new Book().WyporzyczKsiazke(textGUI,ksiazki,stanlabel,ksiegarnia);
             }
         }).addTo(lewy);
 
@@ -166,7 +155,7 @@ class Terminala {
         new Button("Zwróć książkę", new Runnable() {
             @Override
             public void run() {
-                new Book().ZwrotKsiazki(textGUI,ksiazki,ksiegarniaSingleton,stanlabel);
+                new Book().ZwrotKsiazki(textGUI,ksiazki,ksiegarnia,stanlabel);
             }
         }).addTo(lewy);
 
@@ -174,7 +163,7 @@ class Terminala {
         new Button("Kup książkę", new Runnable() {
             @Override
             public void run() {
-                new Book().KupnoKsiazki(textGUI,ksiazki,ksiegarniaSingleton,stanlabel);
+                new Book().KupnoKsiazki(textGUI,ksiazki,ksiegarnia,stanlabel);
             }
         }).addTo(lewy);
         lewy.addComponent(spacja2);
@@ -191,7 +180,7 @@ class Terminala {
             }
         }).addTo(lewy);
 
-        //sortowanie listy studentów
+        //sortowanie listy studentów po imieniu
         new Button("Sort studentów po imieniu", new Runnable() {
             @Override
             public void run() {
@@ -205,6 +194,7 @@ class Terminala {
             }
         }).addTo(lewy);
 
+        //sortowanie listy studentów po indeksie
         new Button("Sort studentów po indeksie", new Runnable() {
             @Override
             public void run() {
@@ -268,7 +258,7 @@ class Terminala {
         new Button("Ilość wolnych miejsc", new Runnable() {
             @Override
             public void run() {
-                ksiegarniaSingleton.wolne_miejsce(textGUI);
+                ksiegarnia.wolne_miejsce(textGUI);
             }
         }).addTo(lewy);
 

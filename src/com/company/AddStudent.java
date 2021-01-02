@@ -9,8 +9,8 @@ import java.util.List;
 public class AddStudent implements Element{
 
     @Override
-    public void dodaj(WindowBasedTextGUI textGUI, KsiegarniaSingleton ksiegarniaSingleton,
-                      List<Student> listastudentow, List<Book> listaksiazki , Table<String> tablica, Label stanlabel,Ksiegarnia ksiegarnia) {
+    public void dodaj(WindowBasedTextGUI textGUI, List<Student> listastudentow, List<Book> listaksiazki ,
+                      Table<String> tablica, Label stanlabel,Ksiegarnia ksiegarnia) {
          new Polacz().dodajstudenta(textGUI,tablica,listastudentow);
     }
 }

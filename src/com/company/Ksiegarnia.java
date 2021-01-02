@@ -17,10 +17,10 @@ public class Ksiegarnia {
     }
     public int ilosc_miejsc_na_poczotku(){
         return 5000;
-    }
+    } //ustawanie ile księgarnia ma miejsca na początku
     public int ilosc_wolynch_miejsc(){
         return miejsce_w_magazynie_i_na_polkach;
-    }
+    } //zwraca ilość jeszcze dostępnego miejsca w księgarni
 
     //wyświetla informacje na temat ile jest jeszcze wolnego miejsca na książki
     public void wolne_miejsce(WindowBasedTextGUI textGUI){
@@ -32,19 +32,20 @@ public class Ksiegarnia {
                 .showDialog(textGUI);
     }
 
+    //zmiana stanu, nie połączony z Labelem, to są dwa "Stany"
     private void zmianaStanu(){
         int wolne_miejsca = ksiegarnia.ilosc_wolynch_miejsc();
         int miejsca_poczotek = ksiegarnia.ilosc_miejsc_na_poczotku();
         if(wolne_miejsca == 0){
-            ksiegarnia.stan2 = StanPelno.getInstance(); System.out.println("stanpelno");
+            ksiegarnia.stan2 = StanPelno.getInstance(); //System.out.println("stanpelno");
         }else if(wolne_miejsca < miejsca_poczotek * 0.15 && wolne_miejsca > 0){
-            ksiegarnia.stan2 = StanPrawiePelno.getInstance(); System.out.println("stanprawiepelno");
+            ksiegarnia.stan2 = StanPrawiePelno.getInstance(); //System.out.println("stanprawiepelno");
         }else if(wolne_miejsca >= miejsca_poczotek * 0.15 && wolne_miejsca <= miejsca_poczotek * 0.85){
-            ksiegarnia.stan2 = StanZbalansowany.getInstance(); System.out.println("stanzbalansowany");
+            ksiegarnia.stan2 = StanZbalansowany.getInstance(); //System.out.println("stanzbalansowany");
         }else if(wolne_miejsca > miejsca_poczotek * 0.85 && wolne_miejsca < miejsca_poczotek){
-            ksiegarnia.stan2 = StanPrawiePusto.getInstance(); System.out.println("stanprawiepusto");
+            ksiegarnia.stan2 = StanPrawiePusto.getInstance(); //System.out.println("stanprawiepusto");
         }else if(wolne_miejsca == miejsca_poczotek){
-            ksiegarnia.stan2 = StanPusto.getInstance(); System.out.println("stanpusto");
+            ksiegarnia.stan2 = StanPusto.getInstance(); //System.out.println("stanpusto");
         }
     }
 
@@ -148,13 +149,7 @@ public class Ksiegarnia {
         }
     }
 
-    //nie wiem czy to jest potrzebne?
-    private final Stan2 STANPELNO = StanPelno.getInstance(),
-                        STANPRAWIEPELNO = StanPrawiePelno.getInstance(),
-                        STANPUSTO = StanPusto.getInstance(),
-                        STANPRAWIEPUSTO = StanPrawiePusto.getInstance(),
-                        STANZBALANSOWANY = StanZbalansowany.getInstance();
-
+    private final Stan2 STANPUSTO = StanPusto.getInstance();
     private Stan2 stan2 = STANPUSTO;
 
     public void zwieksz_ilosc_wolnego_miejsca(int ile){stan2.zwieksz_ilosc_miejsca(ile,this);} //zwiekszam miejsce czyli "zabieram" książki

@@ -1,6 +1,7 @@
 package com.company;
 
 import com.github.javafaker.Faker;
+import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.TextBox;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
@@ -15,11 +16,11 @@ import java.util.regex.Pattern;
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
 public class Book {
-    private String title;
-    private String autor;
-    private int year;
-    private int prize;
-    private int count;
+    private String title; //tytuł
+    private String autor; //autor
+    private int year; //rok wydania
+    private int prize; //cena
+    private int count; //ilość w księgarni, ilość na stanie
 
     public Book(){
         title=null;
@@ -37,22 +38,23 @@ public class Book {
         this.count = count;
     }
 
-
+    //zwraca tytuł książki
     public String getTitle() {
         return title;
     }
-
+    //zwraca autora książki
     public String getAutor() { return autor; }
-
+    //zwraca rok książki
     public int getYear() {
         return year;
     }
-
+    //zwraca cenę książki
     public int getPrize() {
         return prize;
     }
-
+    //zwraca ilość danej książki
     public int getCount() { return count; }
+    //ustawia ilość danej książki w przypadku np zwrócenia książki
     public void setCount(int i) { this.count = i;}
 
     @Override
@@ -66,7 +68,8 @@ public class Book {
                 '}';
     }
 
-    public Book Bookfake(KsiegarniaSingleton ksiegarniaSingleton,Ksiegarnia ksiegarnia){
+    //do buildera tworzy listę początkowych książek
+    public Book Bookfake(Ksiegarnia ksiegarnia){
         Random random = new Random();
         Faker faker = new Faker();
         String autor = faker.name().fullName();//losowanie autora
@@ -77,13 +80,41 @@ public class Book {
         }
         int rok_wydania = random.nextInt(2020 - 1800) + 1800;//(max-min)+min
         int ilosc_na_stanie = random.nextInt(70);
-        ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
         ksiegarnia.zmiejsz_ilosc_wolnego_miejsca(ilosc_na_stanie);
         return new Book(title,autor,rok_wydania,cena,ilosc_na_stanie);
     }
 
+    //służy do inicjalizacji labela który pokazuje w jakim stanie są magazyny i półki księgarni
+    public void inicjalizacja_labela(Ksiegarnia ksiegarnia, Label stanlabel){
+        if(ksiegarnia.ilosc_wolynch_miejsc() > ksiegarnia.ilosc_miejsc_na_poczotku()*0.70){
+            stanlabel.setBackgroundColor(new TextColor.RGB(0,255,0));
+        }else if(ksiegarnia.ilosc_wolynch_miejsc() > ksiegarnia.ilosc_miejsc_na_poczotku()*0.30){
+            stanlabel.setBackgroundColor(new TextColor.RGB(255,255,0));
+        }else{
+            stanlabel.setBackgroundColor(new TextColor.RGB(255,0,0));
+        }
+    }
+
+    //zmienia stan labela, między innymi w momencie kiedy książki się dodaje, usuwa, lub wyporzycza
+    public Stan zmiana_stanu_labela(int ilosc_wolnych_miejsc, int ilosc_miejsc_na_poczatku, Label stanlabel){
+        Stan stan;
+        if(ilosc_wolnych_miejsc > ilosc_miejsc_na_poczatku*0.70){
+            stan = new StanPrawiePusto(stanlabel);
+        }else if(ilosc_wolnych_miejsc > ilosc_miejsc_na_poczatku*0.30){
+            stan = new StanZbalansowany(stanlabel);
+        }else if(ilosc_wolnych_miejsc == 0){
+            stan = new StanPelno(stanlabel);
+        }else if(ilosc_wolnych_miejsc == ilosc_miejsc_na_poczatku) {
+            stan = new StanPusto(stanlabel);
+        }else{
+            stan = new StanPrawiePelno(stanlabel);
+        }
+        return stan;
+    }
+
+    //usuwa książkę z księgarni , czyli wszystkie jej egzemplarze
     public void UsunKsiazkeIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka,
-                                                    KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel,Ksiegarnia ksiegarnia){
+                                                     Label stanlabel,Ksiegarnia ksiegarnia){
         String tytul = new TextInputDialogBuilder()
                 .setTitle("Usuń wszystkie egzemplarze")
                 .setDescription("Podaj tytuł")
@@ -100,7 +131,7 @@ public class Book {
         boolean usun = false;
         int ksiazkanumer = 0;
         int ile_trzeba_zwolnic_miejsca = 0;
-        Stan stan;
+        Stan stan ;
         for(Book ksiazka : ksiazki){
             String tytul_ksiazki = ksiazka.getTitle();
             String autor_ksiazki = ksiazka.getAutor();
@@ -112,30 +143,21 @@ public class Book {
             }
         }
         if(usun){
-            ksiegarniaSingleton.update_miejsca(ile_trzeba_zwolnic_miejsca);
             ksiegarnia.zwieksz_ilosc_wolnego_miejsca(ile_trzeba_zwolnic_miejsca);
             table2_ksiazka.getTableModel().removeRow(ksiazkanumer - 1);
             ksiazki.remove(ksiazkanumer - 1);
             table2_ksiazka.setVisibleRows(7);
             table2_ksiazka.getRenderer();
-            if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                stan = new StanPrawiePusto(stanlabel);
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                stan = new StanZbalansowany(stanlabel);
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
-                stan = new StanPelno(stanlabel);
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
-                stan = new StanPusto(stanlabel);
-            }else{
-                stan = new StanPrawiePelno(stanlabel);
-            }
+            stan = zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
             stan.color();
             stan.tekst();
         }
     }
 
-    public void WyporzyczKsiazke(WindowBasedTextGUI textGUI, List<Book> ksiazki, KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel){
-        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
+    //wyporzycza książkę z księgarni
+    public void WyporzyczKsiazke(WindowBasedTextGUI textGUI, List<Book> ksiazki,
+                                 Label stanlabel, Ksiegarnia ksiegarnia){
+        if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
             new MessageDialogBuilder()
                     .setTitle("Informacja")
                     .setText("Brak jakiejkolwiek książki!")
@@ -162,18 +184,8 @@ public class Book {
                 if(tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)){
                     if(ksiazka.getCount() != 0){
                         ksiazka.setCount(ksiazka.getCount() - 1);
-                        ksiegarniaSingleton.update_miejsca(-1);
-                        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                            stan = new StanPrawiePusto(stanlabel);
-                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                            stan = new StanZbalansowany(stanlabel);
-                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
-                            stan = new StanPelno(stanlabel);
-                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
-                            stan = new StanPusto(stanlabel);
-                        }else{
-                            stan = new StanPrawiePelno(stanlabel);
-                        }
+                        ksiegarnia.zwieksz_ilosc_wolnego_miejsca(1);
+                        stan = zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
                         stan.color();
                         stan.tekst();
                         break;
@@ -191,8 +203,9 @@ public class Book {
         }
     }
 
-    public void ZwrotKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel){
-        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()){
+    //zwraca książkę do księgarni
+    public void ZwrotKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  Ksiegarnia ksiegarnia, Label stanlabel){
+        if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
             new MessageDialogBuilder()
                     .setTitle("Informacja")
                     .setText("W tym momencie nie masz możliwości\n zwrotu książki!")
@@ -220,19 +233,9 @@ public class Book {
                 if (tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)) {
                     ilosc_na_stanie = ksiazka.getCount();
                     ilosc_na_stanie++;
-                    ksiegarniaSingleton.update_miejsca(1);
+                    ksiegarnia.zmiejsz_ilosc_wolnego_miejsca(1);
                     ksiazka.setCount(ilosc_na_stanie);
-                    if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                        stan = new StanPrawiePusto(stanlabel);
-                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                        stan = new StanZbalansowany(stanlabel);
-                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
-                        stan = new StanPelno(stanlabel);
-                    }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
-                        stan = new StanPusto(stanlabel);
-                    }else{
-                        stan = new StanPrawiePelno(stanlabel);
-                    }
+                    stan = zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
                     stan.color();
                     stan.tekst();
                     new MessageDialogBuilder()
@@ -247,8 +250,9 @@ public class Book {
         }
     }
 
-    public void KupnoKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  KsiegarniaSingleton ksiegarniaSingleton, Label stanlabel){
-        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
+    //kupuje książkę do księgarni
+    public void KupnoKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  Ksiegarnia ksiegarnia, Label stanlabel){
+        if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
             new MessageDialogBuilder()
                     .setTitle("Informacja")
                     .setText("W tym momencie nie masz możliwości\n kupna żadnej książki!")
@@ -278,18 +282,8 @@ public class Book {
                     if(ilosc_na_stanie != 0){
                         ilosc_na_stanie = ksiazka.getCount() - 1;
                         ksiazka.setCount(ilosc_na_stanie);
-                        ksiegarniaSingleton.update_miejsca(1);
-                        if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                            stan = new StanPrawiePusto(stanlabel);
-                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                            stan = new StanZbalansowany(stanlabel);
-                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
-                            stan = new StanPelno(stanlabel);
-                        }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
-                            stan = new StanPusto(stanlabel);
-                        }else{
-                            stan = new StanPrawiePelno(stanlabel);
-                        }
+                        ksiegarnia.zwieksz_ilosc_wolnego_miejsca(1);
+                        stan = zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
                         stan.color();
                         stan.tekst();
                         new MessageDialogBuilder()
@@ -313,6 +307,7 @@ public class Book {
         }
     }
 
+    //szuka kontretnej książki w księgarni
     public void SzukajKsiazki(WindowBasedTextGUI textGUI, Table<String> table2_ksiazka, List<Book> ksiazki, TextBox tytul_szukaj){
         if(ksiazki.isEmpty()){
             new MessageDialogBuilder()

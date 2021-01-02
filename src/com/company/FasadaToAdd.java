@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
+//uproszczenie wywoływanie funkcji do pobierania danych o nowym obiekcie
+//stąd dziwne nazwy jak "dodaj_imie_tytul"
 public interface FasadaToAdd {
     String dodaj_imie_tytul(WindowBasedTextGUI textGUI);
     String dodaj_nazwisko_autor(WindowBasedTextGUI textGUI);
@@ -19,6 +21,7 @@ public interface FasadaToAdd {
     int dodaj_iloscwyp_ilosc_nastanie(WindowBasedTextGUI textGUI);
 }
 
+//klasa która łączy wszystkie "prośby" o informacje w jedno
 class Polacz{
     private AddStudentFasada studentFasada = new AddStudentFasada();
     private AddBookFasada bookFasada = new AddBookFasada();
@@ -35,7 +38,7 @@ class Polacz{
         table_student.getTableModel().addRow(imie,nazwisko,stringindeks);
     }
 
-    public void dodajksiakze(WindowBasedTextGUI textGUI, KsiegarniaSingleton ksiegarniaSingleton, Table<String> table2_ksiazki,
+    public void dodajksiakze(WindowBasedTextGUI textGUI, Table<String> table2_ksiazki,
                              List<Book> ksiazki, Label stanlabel,Ksiegarnia ksiegarnia){
         String tytul = bookFasada.dodaj_imie_tytul(textGUI);
         String autor = bookFasada.dodaj_nazwisko_autor(textGUI);
@@ -43,7 +46,7 @@ class Polacz{
         int cena = bookFasada.dodaj_rok_studiow_cena(textGUI);
         int ilosc_na_stanie = bookFasada.dodaj_iloscwyp_ilosc_nastanie(textGUI);
         Stan stan;
-        if(ilosc_na_stanie > ksiegarniaSingleton.ilosc_wolynch_miejsc()){
+        if(ilosc_na_stanie > ksiegarnia.ilosc_wolynch_miejsc()){
             new MessageDialogBuilder()
                     .setTitle("Coś poszło nie tak")
                     .setText("Nie będzie miejsca na tyle książek!")
@@ -55,19 +58,8 @@ class Polacz{
             ksiazki.add(book);
             String stringcena = Integer.toString(cena);
             table2_ksiazki.getTableModel().addRow(tytul,autor,stringcena);
-            ksiegarniaSingleton.update_miejsca(-ilosc_na_stanie);
             ksiegarnia.zmiejsz_ilosc_wolnego_miejsca(ilosc_na_stanie);
-            if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.70){
-                stan = new StanPrawiePusto(stanlabel);
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() > ksiegarniaSingleton.ilosc_miejsc_na_poczotku()*0.30){
-                stan = new StanZbalansowany(stanlabel);
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == 0){
-                stan = new StanPelno(stanlabel);
-            }else if(ksiegarniaSingleton.ilosc_wolynch_miejsc() == ksiegarniaSingleton.ilosc_miejsc_na_poczotku()) {
-                stan = new StanPusto(stanlabel);
-            }else{
-                stan = new StanPrawiePelno(stanlabel);
-            }
+            stan = book.zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
             stan.color();
             stan.tekst();
         }

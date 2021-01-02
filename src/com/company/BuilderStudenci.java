@@ -12,6 +12,7 @@ public class BuilderStudenci implements  Builder{
         listastudentow.add(student);
     }
 
+    //budowniczy zwraca listę utworzonych studentów na początku do Directora
     public List<Student> pobierzliste(){
         return listastudentow;
     }

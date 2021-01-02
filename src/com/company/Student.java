@@ -13,11 +13,12 @@ import java.util.regex.Pattern;
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
 public class Student {
-    private String name;
-    private String nazwisko;
-    private int nr_ideksu;
-    private int rok_studiow;
-    private int ilosc_wyporz_ksiazek;
+    private String name; //imie
+    private String nazwisko; //nazwisko
+    private int nr_ideksu; //numer indeksu
+    private int rok_studiow; //rok studiów
+    private int ilosc_wyporz_ksiazek; //ilość już wyporzyczonych książek, klasa Student i Book nie jest ze sobą
+                                      //w żaden sposób połączona
 
     private Strategia strategia;
 
@@ -37,24 +38,26 @@ public class Student {
         ilosc_wyporz_ksiazek=0;
     }
 
+    //zwraca imie studenta
     public String getName(){
         return name;
     }
-
+    //zwraca nazwisko studenta
     public String getNazwisko(){
         return nazwisko;
     }
-
+    //zwraca numer indeksu studenta
     public int getNr_ideksu(){
         return nr_ideksu;
     }
-
+    //zwraca rok studiów studenta
     public int getRok_studiow(){
         return rok_studiow;
     }
-
+    //zwraca ilość już wyporzyczonych książek przez studenta
     public int getIlosc_wyporz_ksiazek() { return ilosc_wyporz_ksiazek; }
 
+    //do buildera tworzy początkową listę studentów
     public Student Studentfake(){
         Random random = new Random();
         Faker faker = new Faker();
@@ -67,6 +70,7 @@ public class Student {
         return new Student(name,surname,indesk,rok_studiow,ilosc_wyporz_ksiazek);
     }
 
+    //do strategi a dokładnie do sortowania po indeksie lub po imieniu
     public static Comparator<Student>  IndeksCompare = new Comparator<Student>(){
         @Override
         public int compare(Student o1, Student o2) {
@@ -85,6 +89,7 @@ public class Student {
         }
     };
 
+    //sortowwanie listy studentów
     public List<Student> Sortuj(List<Student> lista, boolean i){
         SortowaniePoImieniu strategiaimie = new SortowaniePoImieniu();
         SortowaniePoIndeksie strategiaindeks = new SortowaniePoIndeksie();
@@ -95,6 +100,7 @@ public class Student {
         }
     }
 
+    //wyszukianie studenta
     public void SzukajStudenta(WindowBasedTextGUI textGUI, TextBox szukaj_indeks, Table<String> table_student, List<Student> dane_studentow){
         if(dane_studentow.isEmpty()){
             new MessageDialogBuilder()
@@ -133,6 +139,7 @@ public class Student {
         }
     }
 
+    //usuwanie studenta z listy
     public void UsunStudenta(WindowBasedTextGUI textGUI,List<Student> dane_studentow, Table<String> table_student){
         if(dane_studentow.isEmpty()){
             new MessageDialogBuilder()
