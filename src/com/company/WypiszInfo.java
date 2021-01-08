@@ -4,12 +4,14 @@ import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 
+import javax.swing.*;
 import java.util.List;
 
 import static com.googlecode.lanterna.gui2.dialogs.MessageDialogButton.OK;
 
 public interface WypiszInfo {
     void wypisz(WindowBasedTextGUI textGUI, Table<String> tabela, int i, List<Student> lista_studentow,List<Book> lista_ksiazek);
+    void wypiszGUI(int index, JFrame frame, List<Student> dane, List<Book> ksiazki);
 }
 
 class WypiszStudenta implements WypiszInfo {
@@ -33,6 +35,13 @@ class WypiszStudenta implements WypiszInfo {
                 .showDialog(textGUI);
 
     }
+
+    @Override
+    public void wypiszGUI(int index, JFrame frame, List<Student> dane, List<Book> ksiazki) {
+        JOptionPane.showMessageDialog(frame,"Imie: " + dane.get(index).getName() + "\nNazwisko: " + dane.get(index).getNazwisko() +
+                "\nNumer indeksu: " + dane.get(index).getNr_ideksu() + "\nRok studiow: " + dane.get(index).getRok_studiow() +
+                "\nIlość wyporzyczonych książek: " + dane.get(index).getIlosc_wyporz_ksiazek());
+    }
 }
 
 class WypiszKsiazke implements WypiszInfo {
@@ -54,5 +63,12 @@ class WypiszKsiazke implements WypiszInfo {
                 .addButton(OK)
                 .build()
                 .showDialog(textGUI);
+    }
+
+    @Override
+    public void wypiszGUI(int index, JFrame frame, List<Student> dane, List<Book> ksiazki) {
+        JOptionPane.showMessageDialog(frame,"Tytuł: " + ksiazki.get(index).getTitle() + "\nAutor: " + ksiazki.get(index).getAutor() +
+                "\nRok wydania: " + ksiazki.get(index).getYear() + "\nCena: " + ksiazki.get(index).getPrize() +
+                "\nIlość na magazynie: " + ksiazki.get(index).getCount());
     }
 }

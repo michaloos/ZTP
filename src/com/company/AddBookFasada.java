@@ -3,6 +3,7 @@ package com.company;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 
+import javax.swing.*;
 import java.util.regex.Pattern;
 
 public class AddBookFasada implements FasadaToAdd{
@@ -64,6 +65,35 @@ public class AddBookFasada implements FasadaToAdd{
                 .showDialog(textGUI);
         return Integer.parseInt(dostepna_ilosc);
     }
+
+    @Override
+    public String dodaj_imie_tytulGUI(JFrame frame) {
+        return JOptionPane.showInputDialog(frame, "Podaj tytuł książki do dodania:");
+    }
+
+    @Override
+    public String dodaj_nazwisko_autorGUI(JFrame frame) {
+        return JOptionPane.showInputDialog(frame, "Podaj autora książki do dodania:");
+    }
+
+    @Override
+    public int dodaj_indeks_rokGUI(JFrame frame) {
+        String rok_wydania = JOptionPane.showInputDialog(frame, "Podaj rok wydania książki do dodania:");
+        return Integer.parseInt(rok_wydania);
+    }
+
+    @Override
+    public int dodaj_rok_studiow_cenaGUI(JFrame frame) {
+        String cena = JOptionPane.showInputDialog(frame, "Podaj cenę książki do dodania:");
+        return Integer.parseInt(cena);
+    }
+
+    @Override
+    public int dodaj_iloscwyp_ilosc_nastanieGUI(JFrame frame) {
+        String ilosc_na_stanie = JOptionPane.showInputDialog(frame, "Podaj ilość danej książeki jaka ma zostać dodana:");
+        return Integer.parseInt(ilosc_na_stanie);
+    }
+
 }
 
 

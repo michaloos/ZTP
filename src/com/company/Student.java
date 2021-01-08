@@ -7,6 +7,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 
+import javax.swing.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -37,6 +38,9 @@ public class Student {
         rok_studiow=0;
         ilosc_wyporz_ksiazek=0;
     }
+
+    @Override
+    public String toString(){ return name + ' ' + nazwisko + ' ' + nr_ideksu; }
 
     //zwraca imie studenta
     public String getName(){
@@ -70,6 +74,8 @@ public class Student {
         return new Student(name,surname,indesk,rok_studiow,ilosc_wyporz_ksiazek);
     }
 
+
+
     //do strategi a dokładnie do sortowania po indeksie lub po imieniu
     public static Comparator<Student>  IndeksCompare = new Comparator<Student>(){
         @Override
@@ -79,6 +85,8 @@ public class Student {
             return ind1 - ind2;
         }
     };
+
+    
 
     public static Comparator<Student> ImieCompare = new Comparator<Student>() {
         @Override
@@ -97,6 +105,18 @@ public class Student {
             return new ArrayList<>(strategiaimie.sortowanie(lista));
         }else{
             return new ArrayList<>(strategiaindeks.sortowanie(lista));
+        }
+    }
+
+    public void SzukajStudentaGUI(DefaultListModel<String> lista, List<Student> dane,JTextField jTextField){
+        String indeksstring = jTextField.getText();
+        int indeks = Integer.parseInt(indeksstring);
+        lista.clear();
+        for(Student student : dane){
+            int student_indeks = student.getNr_ideksu();
+            if(indeks == student_indeks){
+                lista.addElement(student.toString());
+            }
         }
     }
 
@@ -172,6 +192,28 @@ public class Student {
                 table_student.setVisibleRows(7);
                 table_student.getRenderer();
             }
+        }
+    }
+
+    public void UsunStudentaGUI(DefaultListModel<String> lista, List<Student> dane_studentow, JFrame frame){
+        String numer_indeksu = JOptionPane.showInputDialog(frame, "Podaj numer indeksu studenta do usunięcia:");
+        int numer_indeksu_int = Integer.parseInt(numer_indeksu);
+        boolean usun = false;
+        int studtnr = 0;
+        for(Student student : dane_studentow){
+            int numer_studenta = student.getNr_ideksu();
+            studtnr++;
+            if(numer_indeksu_int == numer_studenta){
+                usun = true;
+                break;
+            }
+        }
+        if(usun){
+            lista.removeElementAt(studtnr - 1);
+            dane_studentow.remove(studtnr - 1);
+            JOptionPane.showMessageDialog(frame,"Student został pomyślnie usunięty.");
+        }else{
+             JOptionPane.showMessageDialog(frame,"Takiego studenta nie ma na liście.");
         }
     }
 }

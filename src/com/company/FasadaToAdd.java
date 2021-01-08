@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 
+import javax.swing.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,11 @@ public interface FasadaToAdd {
     int dodaj_indeks_rok(WindowBasedTextGUI textGUI);
     int dodaj_rok_studiow_cena(WindowBasedTextGUI textGUI);
     int dodaj_iloscwyp_ilosc_nastanie(WindowBasedTextGUI textGUI);
+    String dodaj_imie_tytulGUI(JFrame frame);
+    String dodaj_nazwisko_autorGUI(JFrame frame);
+    int dodaj_indeks_rokGUI(JFrame frame);
+    int dodaj_rok_studiow_cenaGUI(JFrame frame);
+    int dodaj_iloscwyp_ilosc_nastanieGUI(JFrame frame);
 }
 
 //klasa która łączy wszystkie "prośby" o informacje w jedno
@@ -63,5 +69,38 @@ class Polacz{
             stan.color();
             stan.tekst();
         }
+    }
+
+    public void dodajStudentaGUI(JFrame frame, List<Student> dane_studentow,DefaultListModel<String> lista){
+        String imie = studentFasada.dodaj_imie_tytulGUI(frame);
+        String nazwisko = studentFasada.dodaj_nazwisko_autorGUI(frame);
+        int indeks = studentFasada.dodaj_indeks_rokGUI(frame);
+        int rok_studiow = studentFasada.dodaj_rok_studiow_cenaGUI(frame);
+        int ilosc_wyporz_ksiazek = studentFasada.dodaj_iloscwyp_ilosc_nastanieGUI(frame);
+        Student student = new Student(imie,nazwisko,indeks,rok_studiow,ilosc_wyporz_ksiazek);
+        dane_studentow.add(student);
+        lista.addElement(student.toString());
+    }
+
+    public void dodajKsiazkeGUI(JFrame frame,List<Book> ksiazki, DefaultListModel<String> lista, JLabel jLabelstan,Ksiegarnia ksiegarnia){
+        String tytul = bookFasada.dodaj_imie_tytulGUI(frame);
+        String autor = bookFasada.dodaj_nazwisko_autorGUI(frame);
+        int rok_wydania = bookFasada.dodaj_indeks_rokGUI(frame);
+        int cena = bookFasada.dodaj_rok_studiow_cenaGUI(frame);
+        int ilosc_na_stanie = bookFasada.dodaj_iloscwyp_ilosc_nastanieGUI(frame);
+        StanGUI stanGUI;
+        if(ilosc_na_stanie > ksiegarnia.ilosc_wolynch_miejsc()){
+            JOptionPane.showMessageDialog(frame,"Coś poszło nie tak.\n Nie ma miejsca na tyle książek.");
+        }else{
+            Book book = new Book(tytul,autor,rok_wydania,cena,ilosc_na_stanie);
+            ksiazki.add(book);
+            lista.addElement(book.toString());
+            ksiegarnia.zmiejsz_ilosc_wolnego_miejsca(ilosc_na_stanie);
+            stanGUI = book.zmiana_stanu_labela_GUI(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),jLabelstan);
+            stanGUI.color();
+            stanGUI.tekst();
+        }
+
+
     }
 }

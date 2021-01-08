@@ -16,7 +16,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.io.IOException;
 
+import static com.company.Swing.SwingGUI;
+
 class Terminala {
+
+    public static List<Student> dane_studentow;
+    public static List<Book> ksiazki;
+
     public static void Terminal() throws IOException {
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
 
@@ -73,8 +79,8 @@ class Terminala {
             builderStudenci.createElement();
         }
 
-        List<Student> dane_studentow = new ArrayList<Student>(builderStudenci.pobierzliste());
-        List<Book> ksiazki = new ArrayList<Book>(builderKsiazki.pobierzliste());
+        dane_studentow = new ArrayList<Student>(builderStudenci.pobierzliste());
+        ksiazki = new ArrayList<Book>(builderKsiazki.pobierzliste());
         //dodawanie wstępnych studentów
         for (Student student : dane_studentow) {
             String nr = Integer.toString(student.getNr_ideksu());
@@ -272,6 +278,19 @@ class Terminala {
             public void run() {
                 try {
                     terminal.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).addTo(lewy);
+
+        //zamiana trybu tekstowego na graficzny
+        new Button("Zamiana w tryb graficzny", new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    terminal.close();
+                    SwingGUI();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

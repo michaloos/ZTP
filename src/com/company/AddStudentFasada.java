@@ -3,6 +3,7 @@ package com.company;
 import com.googlecode.lanterna.gui2.WindowBasedTextGUI;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 
+import javax.swing.*;
 import java.util.regex.Pattern;
 
 public class AddStudentFasada implements FasadaToAdd{
@@ -63,6 +64,35 @@ public class AddStudentFasada implements FasadaToAdd{
                 .build()
                 .showDialog(textGUI);
         return Integer.parseInt(ilosc);
+    }
+
+    //GUI
+    @Override
+    public String dodaj_imie_tytulGUI(JFrame frame) {
+        return JOptionPane.showInputDialog(frame, "Podaj imię studenta do dodania:");
+    }
+
+    @Override
+    public String dodaj_nazwisko_autorGUI(JFrame frame) {
+        return JOptionPane.showInputDialog(frame, "Podaj nazwisko studenta do dodania:");
+    }
+
+    @Override
+    public int dodaj_indeks_rokGUI(JFrame frame) {
+        String indeks_string = JOptionPane.showInputDialog(frame, "Podaj numer indeksu studenta do dodania:");
+        return Integer.parseInt(indeks_string);
+    }
+
+    @Override
+    public int dodaj_rok_studiow_cenaGUI(JFrame frame) {
+        String rok_studiow = JOptionPane.showInputDialog(frame, "Podaj rok studiów studenta do dodania:");
+        return Integer.parseInt(rok_studiow);
+    }
+
+    @Override
+    public int dodaj_iloscwyp_ilosc_nastanieGUI(JFrame frame) {
+        String ilosc_wyporz = JOptionPane.showInputDialog(frame, "Podaj ilość wyporzyczonych książek\nprzez studenta do dodania:");
+        return Integer.parseInt(ilosc_wyporz);
     }
 
 }

@@ -9,6 +9,8 @@ import com.googlecode.lanterna.gui2.dialogs.MessageDialogBuilder;
 import com.googlecode.lanterna.gui2.dialogs.TextInputDialogBuilder;
 import com.googlecode.lanterna.gui2.table.Table;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -59,13 +61,7 @@ public class Book {
 
     @Override
     public String toString() {
-        return "Book{" +
-                "title='" + title + '\'' +
-                ", autor=" + autor +
-                ", year=" + year +
-                ", prize=" + prize +
-                ", count=" + count +
-                '}';
+        return title + " | " + autor + " | " + prize;
     }
 
     //do buildera tworzy listę początkowych książek
@@ -95,6 +91,16 @@ public class Book {
         }
     }
 
+    public void inicjalizacja_labela_GUI(Ksiegarnia ksiegarnia, JLabel jLabelstan){
+        if(ksiegarnia.ilosc_wolynch_miejsc() > ksiegarnia.ilosc_miejsc_na_poczotku()*0.70){
+            jLabelstan.setBackground(Color.GREEN);
+        }else if(ksiegarnia.ilosc_wolynch_miejsc() > ksiegarnia.ilosc_miejsc_na_poczotku()*0.30){
+            jLabelstan.setBackground(Color.YELLOW);
+        }else{
+            jLabelstan.setBackground(Color.RED);
+        }
+    }
+
     //zmienia stan labela, między innymi w momencie kiedy książki się dodaje, usuwa, lub wyporzycza
     public Stan zmiana_stanu_labela(int ilosc_wolnych_miejsc, int ilosc_miejsc_na_poczatku, Label stanlabel){
         Stan stan;
@@ -112,22 +118,47 @@ public class Book {
         return stan;
     }
 
+    public StanGUI zmiana_stanu_labela_GUI(int ilosc_wolnych_miejsc, int ilosc_miejsc_na_poczatku,JLabel jLabelstan){
+        StanGUI stanGUI;
+        if(ilosc_wolnych_miejsc > ilosc_miejsc_na_poczatku*0.70){
+            stanGUI = new StanPrawiePustoGUI(jLabelstan);
+        }else if(ilosc_wolnych_miejsc > ilosc_miejsc_na_poczatku*0.30){
+            stanGUI = new StanZbalansowanyGUI(jLabelstan);
+        }else if(ilosc_wolnych_miejsc == 0){
+            stanGUI = new StanPelnoGUI(jLabelstan);
+        }else if(ilosc_wolnych_miejsc == ilosc_miejsc_na_poczatku) {
+            stanGUI = new StanPustoGUI(jLabelstan);
+        }else{
+            stanGUI = new StanPrawiePelnoGUI(jLabelstan);
+        }
+        return stanGUI;
+    }
+
+    //pole do wpisania czegoś
+    public String input(WindowBasedTextGUI textGUI,String title,String description,String validation){
+        return new TextInputDialogBuilder()
+                .setTitle(title)
+                .setDescription(description)
+                .setValidationPattern(Pattern.compile("[a-zA-Z0-9 ]*"),validation)
+                .build()
+                .showDialog(textGUI);
+    }
+
+    //wiadomość / informacja
+    public void message(WindowBasedTextGUI textGUI, String title, String description){
+        new MessageDialogBuilder()
+                .setTitle(title)
+                .setText(description)
+                .addButton(OK)
+                .build()
+                .showDialog(textGUI);
+    }
+
     //usuwa książkę z księgarni , czyli wszystkie jej egzemplarze
     public void UsunKsiazkeIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka,
                                                      Label stanlabel,Ksiegarnia ksiegarnia){
-        String tytul = new TextInputDialogBuilder()
-                .setTitle("Usuń wszystkie egzemplarze")
-                .setDescription("Podaj tytuł")
-                .setValidationPattern(Pattern.compile("[a-zA-Z0-9 ]*"),"Podaj tytuł")
-                .build()
-                .showDialog(textGUI);
-
-        String autor = new TextInputDialogBuilder()
-                .setTitle("Usuń wszystkie egzemplarze")
-                .setDescription("Podaj autora książki")
-                .setValidationPattern(Pattern.compile("[a-zA-Z0-9 ]*"),"Podaj autora")
-                .build()
-                .showDialog(textGUI);
+        String tytul = input(textGUI,"Usuń wszystkie egzemplarze","Podaj tytuł","Podaj tytuł");
+        String autor = input(textGUI,"Usuń wszystkie egzemplarze","Podaj autora książki","Podaj autora");
         boolean usun = false;
         int ksiazkanumer = 0;
         int ile_trzeba_zwolnic_miejsca = 0;
@@ -154,29 +185,45 @@ public class Book {
         }
     }
 
+    public void Usun_ksiazke_GUI(DefaultListModel<String> lista, List<Book> dane, JFrame frame,
+                                 Ksiegarnia ksiegarnia, JLabel jLabelstan){
+        String tytul = JOptionPane.showInputDialog(frame, "Podaj tytuł książki do usunięcia:");
+        String autor = JOptionPane.showInputDialog(frame, "Podaj autora książki do usunięcia:");
+        boolean usun = false;
+        int booknr = 0;
+        int ile_trzeba_zwolnic_miejsca = 0;
+        StanGUI stanGUI;
+        for(Book book : dane){
+            String tytul_ksiazki = book.getTitle();
+            String autor_ksiazki = book.getAutor();
+            booknr++;
+            if(tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)){
+                usun = true;
+                ile_trzeba_zwolnic_miejsca = book.getCount();
+                break;
+            }
+        }
+        if(usun){
+            ksiegarnia.zwieksz_ilosc_wolnego_miejsca(ile_trzeba_zwolnic_miejsca);
+            lista.removeElementAt(booknr - 1);
+            dane.remove(booknr - 1);
+            stanGUI = zmiana_stanu_labela_GUI(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),jLabelstan);
+            stanGUI.tekst();
+            stanGUI.color();
+            JOptionPane.showMessageDialog(frame,"Książka została pomyślnie usunięta.");
+        }else{
+            JOptionPane.showMessageDialog(frame,"Nie posiadamy takiej książki.");
+        }
+    }
+
     //wyporzycza książkę z księgarni
     public void WyporzyczKsiazke(WindowBasedTextGUI textGUI, List<Book> ksiazki,
                                  Label stanlabel, Ksiegarnia ksiegarnia){
-        if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
-            new MessageDialogBuilder()
-                    .setTitle("Informacja")
-                    .setText("Brak jakiejkolwiek książki!")
-                    .addButton(OK)
-                    .build()
-                    .showDialog(textGUI);
+        if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
+            message(textGUI,"Informacja","Brak jakiejkolwiek książki!");
         }else{
-            String tytul = new TextInputDialogBuilder()
-                    .setTitle("Usuń wszystkie egzemplarze")
-                    .setDescription("Podaj tytuł")
-                    .setValidationPattern(Pattern.compile("[a-zA-Z]*"),"podaj tytuł")
-                    .build()
-                    .showDialog(textGUI);
-            String autor = new TextInputDialogBuilder()
-                    .setTitle("Usuń wszystkie egzemplarze")
-                    .setDescription("Podaj autora książki")
-                    .setValidationPattern(Pattern.compile("[a-zA-Z0-9]*"),"podaj autora")
-                    .build()
-                    .showDialog(textGUI);
+            String tytul = input(textGUI,"Wyporzycz książkę","Podaj tytuł","podaj tytuł");
+            String autor = input(textGUI,"Wyporzycz książkę","Podaj autora książki","podaj autora");
             Stan stan;
             for(Book ksiazka : ksiazki){
                 String tytul_ksiazki = ksiazka.getTitle();
@@ -191,12 +238,7 @@ public class Book {
                         break;
                     }
                     else{
-                        new MessageDialogBuilder()
-                                .setTitle("Niepowodzenie")
-                                .setText("Książka nie jest narazie dostępna")
-                                .addButton(OK)
-                                .build()
-                                .showDialog(textGUI);
+                        message(textGUI,"Niepowodzenie","Książka nie jest narazie dostępna!");
                     }
                 }
             }
@@ -205,26 +247,11 @@ public class Book {
 
     //zwraca książkę do księgarni
     public void ZwrotKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  Ksiegarnia ksiegarnia, Label stanlabel){
-        if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
-            new MessageDialogBuilder()
-                    .setTitle("Informacja")
-                    .setText("W tym momencie nie masz możliwości\n zwrotu książki!")
-                    .addButton(OK)
-                    .build()
-                    .showDialog(textGUI);
+        if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
+            message(textGUI,"Informacja","W tym momencie nie masz możliwości\n zwrotu książki!");
         }else{
-            String tytul = new TextInputDialogBuilder()
-                    .setTitle("Usuń wszystkie egzemplarze")
-                    .setDescription("Podaj tytuł")
-                    .setValidationPattern(Pattern.compile("[a-zA-Z]*"), "podaj tytuł")
-                    .build()
-                    .showDialog(textGUI);
-            String autor = new TextInputDialogBuilder()
-                    .setTitle("Usuń wszystkie egzemplarze")
-                    .setDescription("Podaj autora książki")
-                    .setValidationPattern(Pattern.compile("[a-zA-Z0-9]*"), "podaj autora")
-                    .build()
-                    .showDialog(textGUI);
+            String tytul = input(textGUI,"Zwróć książkę","Podaj tytuł","podaj tytuł");
+            String autor = input(textGUI,"Zwróć książkę","Podaj autora książki","podaj autora");
             int ilosc_na_stanie = 0;
             Stan stan;
             for (Book ksiazka : ksiazki) {
@@ -238,12 +265,7 @@ public class Book {
                     stan = zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
                     stan.color();
                     stan.tekst();
-                    new MessageDialogBuilder()
-                            .setTitle("Potwierdzenie")
-                            .setText("Książka została zwrócona")
-                            .addButton(OK)
-                            .build()
-                            .showDialog(textGUI);
+                    message(textGUI,"Potwierdzenie","Książka została zwrócona!");
                     break;
                 }
             }
@@ -252,26 +274,11 @@ public class Book {
 
     //kupuje książkę do księgarni
     public void KupnoKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  Ksiegarnia ksiegarnia, Label stanlabel){
-        if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
-            new MessageDialogBuilder()
-                    .setTitle("Informacja")
-                    .setText("W tym momencie nie masz możliwości\n kupna żadnej książki!")
-                    .addButton(OK)
-                    .build()
-                    .showDialog(textGUI);
+        if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
+            message(textGUI,"Informacja","W tym momencie nie masz możliwości\n kupna żadnej książki!");
         }else{
-            String tytul = new TextInputDialogBuilder()
-                    .setTitle("Usuń wszystkie egzemplarze")
-                    .setDescription("Podaj tytuł")
-                    .setValidationPattern(Pattern.compile("[a-zA-Z]*"), "podaj tytuł")
-                    .build()
-                    .showDialog(textGUI);
-            String autor = new TextInputDialogBuilder()
-                    .setTitle("Usuń wszystkie egzemplarze")
-                    .setDescription("Podaj autora książki")
-                    .setValidationPattern(Pattern.compile("[a-zA-Z0-9]*"), "podaj autora")
-                    .build()
-                    .showDialog(textGUI);
+            String tytul = input(textGUI,"Kup książkę","Podaj tytuł","podaj tytuł");
+            String autor = input(textGUI,"Kup książkę","Podaj autora książki","podaj autora");
             int ilosc_na_stanie = 0;
             Stan stan;
             for(Book ksiazka : ksiazki){
@@ -286,21 +293,11 @@ public class Book {
                         stan = zmiana_stanu_labela(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),stanlabel);
                         stan.color();
                         stan.tekst();
-                        new MessageDialogBuilder()
-                                .setTitle("Potwierdzenie")
-                                .setText("Wkrótce dostaniesz dowód do zapłaty")
-                                .addButton(OK)
-                                .build()
-                                .showDialog(textGUI);
+                        message(textGUI,"Potwierdzenie","Wkrótce dostaniesz dowód do zapłaty");
                         break;
                     }
                     else{
-                        new MessageDialogBuilder()
-                                .setTitle("Potwierdzenie")
-                                .setText("Takiej książki nie ma lub\nnie ma jej w magazynie")
-                                .addButton(OK)
-                                .build()
-                                .showDialog(textGUI);
+                        message(textGUI,"Potwierdzenie","Takiej książki nie ma lub\nnie ma jej w magazynie");
                     }
                 }
             }
@@ -310,21 +307,11 @@ public class Book {
     //szuka kontretnej książki w księgarni
     public void SzukajKsiazki(WindowBasedTextGUI textGUI, Table<String> table2_ksiazka, List<Book> ksiazki, TextBox tytul_szukaj){
         if(ksiazki.isEmpty()){
-            new MessageDialogBuilder()
-                    .setTitle("Informacja")
-                    .setText("W tym momencie nie masz możliwości\n wyszukania żadnej książki!")
-                    .addButton(OK)
-                    .build()
-                    .showDialog(textGUI);
+            message(textGUI,"Informacja","W tym momencie nie masz możliwości\n wyszukania żadnej książki");
         }else{
             String x = tytul_szukaj.getText();
             if(x.equals("")){
-                new MessageDialogBuilder()
-                        .setTitle("Coś poszło nie tak")
-                        .setText("Nic nie zostało wpisane\ndo pola wyszukiwania")
-                        .addButton(OK)
-                        .build()
-                        .showDialog(textGUI);
+                message(textGUI,"Coś poszło nie tak","Nic nie zostało wpisane\ndo pola wyszukiwania!");
             }else{
                 table2_ksiazka.getTableModel().clear();
                 String tytul = tytul_szukaj.getText();
@@ -342,6 +329,112 @@ public class Book {
                     String prize = Double.toString(cena);
                     table2_ksiazka.getTableModel().addRow(tytul,autor,prize);
                 }
+            }
+        }
+    }
+
+    public void SzukajKsiazkiGUI(DefaultListModel<String> lista, List<Book> dane,JTextField jTextField){
+        String tytul = jTextField.getText();
+        lista.clear();
+        for(Book book : dane){
+            String tytul_ksiazki = book.getTitle();
+            if(tytul.equals(tytul_ksiazki)){
+                lista.addElement(book.toString());
+            }
+        }
+    }
+
+    public void wyporzycz_ksiazke_GUI(List<Book> dane, JFrame frame, Ksiegarnia ksiegarnia, JLabel jLabelstan){
+        if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
+            JOptionPane.showMessageDialog(frame,"Brak książek do wyporzyczenia.\nPrzepraszamy.");
+        }else{
+            String tytul = JOptionPane.showInputDialog(frame, "Podaj tytuł książki do wyporzyczenia:");
+            String autor = JOptionPane.showInputDialog(frame, "Podaj autora książki do wyporzyczenia:");
+            boolean wyporzycz = false;
+            StanGUI stanGUI;
+            for(Book book : dane){
+                String tytul_ksiazki = book.getTitle();
+                String autor_ksiazki = book.getAutor();
+                if(tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)){
+                    wyporzycz = true;
+                    if(book.getCount() != 0){
+                        book.setCount(book.getCount() - 1);
+                        ksiegarnia.zwieksz_ilosc_wolnego_miejsca(1);
+                        stanGUI = zmiana_stanu_labela_GUI(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),jLabelstan);
+                        stanGUI.color();
+                        stanGUI.tekst();
+                        JOptionPane.showMessageDialog(frame,"Książka została wyporzyczona.");
+                        break;
+                    }else{
+                        JOptionPane.showMessageDialog(frame,"Takiej książki nie\n ma w magazynie");
+                        break;
+                    }
+                }
+            }
+            if(!wyporzycz){
+                JOptionPane.showMessageDialog(frame,"Nie posiadamy takiej książki");
+            }
+        }
+    }
+
+    public void zwroc_ksiazke_GUI(List<Book> dane, JFrame frame,Ksiegarnia ksiegarnia, JLabel jLabelstan){
+        if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
+            JOptionPane.showMessageDialog(frame,"W tym momencie nie masz możliwości\n zwrotu książki!");
+        }else {
+            String tytul = JOptionPane.showInputDialog(frame, "Podaj tytuł książki do zwrotu:");
+            String autor = JOptionPane.showInputDialog(frame, "Podaj autora książki do zwrotu:");
+            boolean zwroc = false;
+            StanGUI stanGUI;
+            for (Book book : dane) {
+                String tytul_ksiazki = book.getTitle();
+                String autor_ksiazki = book.getAutor();
+                if (tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)) {
+                    zwroc = true;
+                    int ilosc = book.getCount();
+                    book.setCount(ilosc + 1);
+                    ksiegarnia.zmiejsz_ilosc_wolnego_miejsca(1);
+                    stanGUI = zmiana_stanu_labela_GUI(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),jLabelstan);
+                    stanGUI.tekst();
+                    stanGUI.color();
+                    JOptionPane.showMessageDialog(frame, "Dziękujemy za skorzystanie z naszych usług.\nZapraszmy ponownie");
+                    break;
+                }
+            }
+            if (!zwroc) {
+                JOptionPane.showMessageDialog(frame, "Nie mamy takich książek. Sprawdź w innej księgarni");
+            }
+        }
+    }
+
+    public void kup_ksiazke_GUI(List<Book> dane, JFrame frame, Ksiegarnia ksiegarnia, JLabel jLabelstan){
+        if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
+            JOptionPane.showMessageDialog(frame,"W tym momencie nie masz możliwości\n kupna żadnej książki!");
+        }else{
+            String tytul = JOptionPane.showInputDialog(frame, "Podaj tytuł książki do kupienia:");
+            String autor = JOptionPane.showInputDialog(frame, "Podaj autora książki do kupienia:");
+            boolean wyporzycz = false;
+            StanGUI stanGUI;
+            for(Book book : dane){
+                String tytul_ksiazki = book.getTitle();
+                String autor_ksiazki = book.getAutor();
+                if(tytul.equals(tytul_ksiazki) && autor.equals(autor_ksiazki)){
+                    wyporzycz = true;
+                    if(book.getCount() != 0){
+                        book.setCount(book.getCount() - 1);
+                        ksiegarnia.zwieksz_ilosc_wolnego_miejsca(1);
+                        stanGUI = zmiana_stanu_labela_GUI(ksiegarnia.ilosc_wolynch_miejsc(),ksiegarnia.ilosc_miejsc_na_poczotku(),jLabelstan);
+                        stanGUI.color();
+                        stanGUI.tekst();
+                        JOptionPane.showMessageDialog(frame,"Książka została kupiona.\nNiedługo dostaniesz dowód do zapłaty.\nDziękujemy");
+                        break;
+                    }else{
+                        JOptionPane.showMessageDialog(frame,"Książki tej nie ma aktualnie w magazynie.");
+                        break;
+                    }
+                }
+            }
+            if(!wyporzycz){
+                JOptionPane.showMessageDialog(frame,"Nie posiadamy takiej książki");
             }
         }
     }
