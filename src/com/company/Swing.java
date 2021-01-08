@@ -41,6 +41,7 @@ public class Swing {
         listastud.setBounds(450,10,250,30);
         frame.add(listastud);
 
+        //dodawanie elementów do listy książek
         DefaultListModel<String> listModelBook = new DefaultListModel<>();
         for(Book book : ksiazki){
             String string = book.toString();
@@ -54,6 +55,7 @@ public class Swing {
         jScrollPanebook.setBounds(720,40,250,250);
         frame.add(jScrollPanebook);
 
+        //przycisk do wyświetlania informacji o studencie (dokładnych informacji)
         JButton pelne_info_student = new JButton("Informacje o studencie");
         pelne_info_student.setBounds(450,300,250,30);
         pelne_info_student.addActionListener(new ActionListener() {
@@ -67,6 +69,7 @@ public class Swing {
         });
         frame.add(pelne_info_student);
 
+        //przycisk do wyświetlania informacji o książce (dokładnych informacji)
         JButton pelne_info_book = new JButton("Informcje o książce");
         pelne_info_book.setBounds(720,300,250,30);
         pelne_info_book.addActionListener(new ActionListener() {
