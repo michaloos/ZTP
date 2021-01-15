@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class AddBookFasada implements FasadaToAdd{
 
-    //proszenie użytownika o tytuł książki
+    //proszenie użytownika o tytuł książki w trybie tekstowym
     @Override
     public String dodaj_imie_tytul(WindowBasedTextGUI textGUI) {
         return new TextInputDialogBuilder()
@@ -19,7 +19,7 @@ public class AddBookFasada implements FasadaToAdd{
                 .showDialog(textGUI);
     }
 
-    //proszenie użytownika o autora książki
+    //proszenie użytownika o autora książki w trybie tekstowym
     @Override
     public String dodaj_nazwisko_autor(WindowBasedTextGUI textGUI) {
         return new TextInputDialogBuilder()
@@ -30,7 +30,7 @@ public class AddBookFasada implements FasadaToAdd{
                 .showDialog(textGUI);
     }
 
-    //proszenie użytownika o rok wydania książki
+    //proszenie użytownika o rok wydania książki w trybie tekstowym
     @Override
     public int dodaj_indeks_rok(WindowBasedTextGUI textGUI) {
         String rok = new TextInputDialogBuilder()
@@ -42,7 +42,7 @@ public class AddBookFasada implements FasadaToAdd{
         return Integer.parseInt(rok);
     }
 
-    //proszenie użytownika o cenę książki
+    //proszenie użytownika o cenę książki w trybie tekstowym
     @Override
     public int dodaj_rok_studiow_cena(WindowBasedTextGUI textGUI) {
         String cena = new TextInputDialogBuilder()
@@ -54,7 +54,7 @@ public class AddBookFasada implements FasadaToAdd{
         return Integer.parseInt(cena);
     }
 
-    //proszenie użytownika o ilość w księgarni danej książki
+    //proszenie użytownika o ilość w księgarni danej książki w trybie tekstowym
     @Override
     public int dodaj_iloscwyp_ilosc_nastanie(WindowBasedTextGUI textGUI) {
         String dostepna_ilosc = new TextInputDialogBuilder()
@@ -66,28 +66,33 @@ public class AddBookFasada implements FasadaToAdd{
         return Integer.parseInt(dostepna_ilosc);
     }
 
+    //proszenie użytownika o tytuł książki w trybie graficznym
     @Override
     public String dodaj_imie_tytulGUI(JFrame frame) {
         return JOptionPane.showInputDialog(frame, "Podaj tytuł książki do dodania:");
     }
 
+    //proszenie użytownika o autora książki w trybie graficznym
     @Override
     public String dodaj_nazwisko_autorGUI(JFrame frame) {
         return JOptionPane.showInputDialog(frame, "Podaj autora książki do dodania:");
     }
 
+    //proszenie użytownika o rok wydania książki w trybie graficznym
     @Override
     public int dodaj_indeks_rokGUI(JFrame frame) {
         String rok_wydania = JOptionPane.showInputDialog(frame, "Podaj rok wydania książki do dodania:");
         return Integer.parseInt(rok_wydania);
     }
 
+    //proszenie użytownika o cenę książki w trybie graficznym
     @Override
     public int dodaj_rok_studiow_cenaGUI(JFrame frame) {
         String cena = JOptionPane.showInputDialog(frame, "Podaj cenę książki do dodania:");
         return Integer.parseInt(cena);
     }
 
+    //proszenie użytownika o ilość w księgarni danej książki w trybie graficznym
     @Override
     public int dodaj_iloscwyp_ilosc_nastanieGUI(JFrame frame) {
         String ilosc_na_stanie = JOptionPane.showInputDialog(frame, "Podaj ilość danej książeki jaka ma zostać dodana:");

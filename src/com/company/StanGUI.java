@@ -1,6 +1,8 @@
 package com.company;
 import javax.swing.*;
 import java.awt.*;
+
+//Stan dla trybu graficznego
 //Stan odnoszący się do labela informującego o stanie księgarni, nie połączony z stanami w klasie księgarnia w trybie graficznym
 abstract class StanGUI {
 
@@ -14,6 +16,7 @@ abstract class StanGUI {
     public abstract void tekst();
 }
 
+//stan w którym nie ma miejsca na nowe książki, księgarnia jest zapchana
 class StanPelnoGUI extends StanGUI{
 
     StanPelnoGUI(JLabel jLabel){
@@ -31,6 +34,7 @@ class StanPelnoGUI extends StanGUI{
     }
 }
 
+//stan w którym prawie nie ma miejsca na nowe książki, jest bardzo mało miejsca na nowe książki
 class StanPrawiePelnoGUI extends StanGUI{
 
     StanPrawiePelnoGUI(JLabel jLabel){
@@ -48,6 +52,7 @@ class StanPrawiePelnoGUI extends StanGUI{
     }
 }
 
+//stan w którym nie prawie nie ma książek do czytania
 class StanPrawiePustoGUI extends StanGUI{
 
     StanPrawiePustoGUI(JLabel jLabelstan){
@@ -65,6 +70,7 @@ class StanPrawiePustoGUI extends StanGUI{
     }
 }
 
+//stan w którym nie ma żadnych książek do czytania, studenci nie mogą nic wyporzyczyć
 class StanPustoGUI extends StanGUI{
 
     StanPustoGUI(JLabel jLabelstan){
@@ -82,6 +88,7 @@ class StanPustoGUI extends StanGUI{
     }
 }
 
+//stan w którym książek nie jest ani za dużo ani za mało
 class StanZbalansowanyGUI extends StanGUI{
 
     StanZbalansowanyGUI(JLabel jLabel){

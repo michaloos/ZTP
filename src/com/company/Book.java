@@ -80,7 +80,7 @@ public class Book {
         return new Book(title,autor,rok_wydania,cena,ilosc_na_stanie);
     }
 
-    //służy do inicjalizacji labela który pokazuje w jakim stanie są magazyny i półki księgarni
+    //służy do inicjalizacji labela który pokazuje w jakim stanie są magazyny i półki księgarni w trybie tekstowym
     public void inicjalizacja_labela(Ksiegarnia ksiegarnia, Label stanlabel){
         if(ksiegarnia.ilosc_wolynch_miejsc() > ksiegarnia.ilosc_miejsc_na_poczotku()*0.70){
             stanlabel.setBackgroundColor(new TextColor.RGB(0,255,0));
@@ -91,6 +91,7 @@ public class Book {
         }
     }
 
+    //służy do inicjalizacji labela który pokazuje w jakim stanie są magazyny i półki księgarni w trybie graficznym
     public void inicjalizacja_labela_GUI(Ksiegarnia ksiegarnia, JLabel jLabelstan){
         if(ksiegarnia.ilosc_wolynch_miejsc() > ksiegarnia.ilosc_miejsc_na_poczotku()*0.70){
             jLabelstan.setBackground(Color.GREEN);
@@ -134,7 +135,7 @@ public class Book {
         return stanGUI;
     }
 
-    //pole do wpisania czegoś
+    //pole do wpisania czegoś w trybie tekstowym
     public String input(WindowBasedTextGUI textGUI,String title,String description,String validation){
         return new TextInputDialogBuilder()
                 .setTitle(title)
@@ -144,7 +145,7 @@ public class Book {
                 .showDialog(textGUI);
     }
 
-    //wiadomość / informacja
+    //wiadomość / informacja w trybie tekstowym
     public void message(WindowBasedTextGUI textGUI, String title, String description){
         new MessageDialogBuilder()
                 .setTitle(title)
@@ -154,7 +155,7 @@ public class Book {
                 .showDialog(textGUI);
     }
 
-    //usuwa książkę z księgarni , czyli wszystkie jej egzemplarze
+    //usuwa książkę z księgarni , czyli wszystkie jej egzemplarze w trybie tekstowym
     public void UsunKsiazkeIWszystkieJejEgzemplarze(WindowBasedTextGUI textGUI, List<Book> ksiazki, Table<String> table2_ksiazka,
                                                      Label stanlabel,Ksiegarnia ksiegarnia){
         String tytul = input(textGUI,"Usuń wszystkie egzemplarze","Podaj tytuł","Podaj tytuł");
@@ -185,6 +186,8 @@ public class Book {
         }
     }
 
+
+    //usuwa książkę z księgarni , czyli wszystkie jej egzemplarze w trybie graficznym
     public void Usun_ksiazke_GUI(DefaultListModel<String> lista, List<Book> dane, JFrame frame,
                                  Ksiegarnia ksiegarnia, JLabel jLabelstan){
         String tytul = JOptionPane.showInputDialog(frame, "Podaj tytuł książki do usunięcia:");
@@ -216,7 +219,7 @@ public class Book {
         }
     }
 
-    //wyporzycza książkę z księgarni
+    //wyporzycza książkę z księgarni w trybie tekstowym
     public void WyporzyczKsiazke(WindowBasedTextGUI textGUI, List<Book> ksiazki,
                                  Label stanlabel, Ksiegarnia ksiegarnia){
         if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
@@ -245,7 +248,7 @@ public class Book {
         }
     }
 
-    //zwraca książkę do księgarni
+    //zwraca książkę do księgarni w trybie tekstowym
     public void ZwrotKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  Ksiegarnia ksiegarnia, Label stanlabel){
         if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
             message(textGUI,"Informacja","W tym momencie nie masz możliwości\n zwrotu książki!");
@@ -272,7 +275,7 @@ public class Book {
         }
     }
 
-    //kupuje książkę do księgarni
+    //kupuje książkę do księgarni w trybie tekstowym
     public void KupnoKsiazki(WindowBasedTextGUI textGUI, List<Book> ksiazki,  Ksiegarnia ksiegarnia, Label stanlabel){
         if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
             message(textGUI,"Informacja","W tym momencie nie masz możliwości\n kupna żadnej książki!");
@@ -304,7 +307,7 @@ public class Book {
         }
     }
 
-    //szuka kontretnej książki w księgarni
+    //szuka kontretnej książki w księgarni w trybie tekstowym
     public void SzukajKsiazki(WindowBasedTextGUI textGUI, Table<String> table2_ksiazka, List<Book> ksiazki, TextBox tytul_szukaj){
         if(ksiazki.isEmpty()){
             message(textGUI,"Informacja","W tym momencie nie masz możliwości\n wyszukania żadnej książki");
@@ -333,6 +336,7 @@ public class Book {
         }
     }
 
+    //szukanie książki w trybie graficznym
     public void SzukajKsiazkiGUI(DefaultListModel<String> lista, List<Book> dane,JTextField jTextField){
         String tytul = jTextField.getText();
         lista.clear();
@@ -344,6 +348,7 @@ public class Book {
         }
     }
 
+    //wyporzyczanie książki w trybie graficznym
     public void wyporzycz_ksiazke_GUI(List<Book> dane, JFrame frame, Ksiegarnia ksiegarnia, JLabel jLabelstan){
         if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
             JOptionPane.showMessageDialog(frame,"Brak książek do wyporzyczenia.\nPrzepraszamy.");
@@ -377,6 +382,7 @@ public class Book {
         }
     }
 
+    //zwracanie książki w trybie graficznym
     public void zwroc_ksiazke_GUI(List<Book> dane, JFrame frame,Ksiegarnia ksiegarnia, JLabel jLabelstan){
         if(ksiegarnia.ilosc_wolynch_miejsc() == 0){
             JOptionPane.showMessageDialog(frame,"W tym momencie nie masz możliwości\n zwrotu książki!");
@@ -406,6 +412,7 @@ public class Book {
         }
     }
 
+    //kupowanie książki w trybie graficznym
     public void kup_ksiazke_GUI(List<Book> dane, JFrame frame, Ksiegarnia ksiegarnia, JLabel jLabelstan){
         if(ksiegarnia.ilosc_wolynch_miejsc() == ksiegarnia.ilosc_miejsc_na_poczotku()){
             JOptionPane.showMessageDialog(frame,"W tym momencie nie masz możliwości\n kupna żadnej książki!");

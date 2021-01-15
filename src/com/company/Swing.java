@@ -21,7 +21,6 @@ public class Swing {
         //listy ze studentami i książkami , które pochodzą z wcześniejszego wywołania terminala tekstowego
         List<Student> dane_studentow = new ArrayList<Student>(Terminala.dane_studentow);
         List<Book> ksiazki = new ArrayList<Book>(Terminala.ksiazki);
-        Ksiegarnia ksiegarnia = Ksiegarnia.getInstance();
 
         //listy do wyświetlania list ze studentami i książkami
         DefaultListModel<String> listModelStudent = new DefaultListModel<>();
@@ -91,6 +90,7 @@ public class Swing {
         glowny_label.setBounds(10,10,200,30);
         frame.add(glowny_label);
 
+        //"fabryka" w trybie graficznym
         Factory elementfactory = new Factory();
 
         //label użyty do stanu magazynu
@@ -99,6 +99,7 @@ public class Swing {
         jLabelstan.setOpaque(true);
         frame.add(jLabelstan);
 
+        //wywołanie inicjalizacji labela w trybie graficznym aby przy uruchomieniu już był odpowiedni kolor
         new Book().inicjalizacja_labela_GUI(ksiegarnia,jLabelstan);
 
         //dodawanie studenta
@@ -184,6 +185,7 @@ public class Swing {
         szukaj_po_tytule.setBounds(10,210,240,30);
         frame.add(szukaj_po_tytule);
 
+        //pole tekstowe do którego wpisujemy tytuł książki którą chcemy wyszukać
         JTextField text_szukaj_po_tytule = new JTextField();
         text_szukaj_po_tytule.setBounds(250,210,150,30);
         frame.add(text_szukaj_po_tytule);
@@ -192,6 +194,7 @@ public class Swing {
         szukaj_po_indeksie.setBounds(10,250,240,30);
         frame.add(szukaj_po_indeksie);
 
+        //pole tekstowe do którego wpisujemy indeks studenta którego chcemy wyszukać
         JTextField text_szukaj_po_indeksie = new JTextField();
         text_szukaj_po_indeksie.setBounds(250,250,150,30);
         frame.add(text_szukaj_po_indeksie);

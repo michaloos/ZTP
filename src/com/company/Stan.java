@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.Label;
 import javax.swing.*;
 import java.awt.*;
 
+//Stan dla trybu tekstowego
 //Stan odnoszący się do labela informującego o stanie księgarni, nie połączony z stanami w klasie księgarnia
 abstract class Stan {
 
@@ -19,6 +20,7 @@ abstract class Stan {
     public abstract void tekst();
 }
 
+//stan w którym nie ma miejsca na nowe książki, księgarnia jest zapchana
 class StanPelno extends Stan{
 
     StanPelno(Label label) {
@@ -35,6 +37,8 @@ class StanPelno extends Stan{
         labelstan.setText("W tym momencie nie ma\nmiejsca na nowe książki!");
     }
 }
+
+//stan w którym prawie nie ma miejsca na nowe książki, jest bardzo mało miejsca na nowe książki
 class StanPrawiePelno extends Stan{
 
     StanPrawiePelno(Label label) {
@@ -52,6 +56,7 @@ class StanPrawiePelno extends Stan{
     }
 }
 
+//stan w którym nie prawie nie ma książek do czytania
 class StanPrawiePusto extends Stan{
 
     StanPrawiePusto(Label label) {
@@ -69,6 +74,7 @@ class StanPrawiePusto extends Stan{
     }
 }
 
+//stan w którym nie ma żadnych książek do czytania, studenci nie mogą nic wyporzyczyć
 class StanPusto extends Stan{
 
     StanPusto(Label label) {
@@ -85,6 +91,8 @@ class StanPusto extends Stan{
         labelstan.setText("Studentci nie mają\nco czytać!");
     }
 }
+
+//stan w którym książek nie jest ani za dużo ani za mało
 class StanZbalansowany extends Stan{
 
     StanZbalansowany(Label label) {

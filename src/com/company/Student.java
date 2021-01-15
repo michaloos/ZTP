@@ -108,6 +108,7 @@ public class Student {
         }
     }
 
+    //wyszukiwanie studenta w trybie graficznym
     public void SzukajStudentaGUI(DefaultListModel<String> lista, List<Student> dane,JTextField jTextField){
         String indeksstring = jTextField.getText();
         int indeks = Integer.parseInt(indeksstring);
@@ -120,7 +121,7 @@ public class Student {
         }
     }
 
-    //wyszukianie studenta
+    //wyszukianie studenta w trybie tekstowym
     public void SzukajStudenta(WindowBasedTextGUI textGUI, TextBox szukaj_indeks, Table<String> table_student, List<Student> dane_studentow){
         if(dane_studentow.isEmpty()){
             new MessageDialogBuilder()
@@ -159,7 +160,7 @@ public class Student {
         }
     }
 
-    //usuwanie studenta z listy
+    //usuwanie studenta z listy w trybie tekstowym
     public void UsunStudenta(WindowBasedTextGUI textGUI,List<Student> dane_studentow, Table<String> table_student){
         if(dane_studentow.isEmpty()){
             new MessageDialogBuilder()
@@ -195,6 +196,7 @@ public class Student {
         }
     }
 
+    //usuwanie studenta z listy w trybie graficznym
     public void UsunStudentaGUI(DefaultListModel<String> lista, List<Student> dane_studentow, JFrame frame){
         String numer_indeksu = JOptionPane.showInputDialog(frame, "Podaj numer indeksu studenta do usunięcia:");
         int numer_indeksu_int = Integer.parseInt(numer_indeksu);

@@ -22,7 +22,7 @@ public class Ksiegarnia {
         return miejsce_w_magazynie_i_na_polkach;
     } //zwraca ilość jeszcze dostępnego miejsca w księgarni
 
-    //wyświetla informacje na temat ile jest jeszcze wolnego miejsca na książki
+    //wyświetla informacje na temat ile jest jeszcze wolnego miejsca na książki w trybie tekstowym
     public void wolne_miejsce(WindowBasedTextGUI textGUI){
         new MessageDialogBuilder()
                 .setTitle("Potwierdzenie")

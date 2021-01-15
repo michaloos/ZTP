@@ -8,7 +8,7 @@ public class BuilderKsiazki implements  Builder {
     List<Book> listaksiazek = new ArrayList<>();
     @Override
     public void createElement() {
-        Book book = new Book().Bookfake(Ksiegarnia.getInstance());
+        Book book = new Book().Bookfake(Terminala.ksiegarnia);
         listaksiazek.add(book);
     }
 

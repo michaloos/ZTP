@@ -22,8 +22,9 @@ class Terminala {
 
     public static List<Student> dane_studentow;
     public static List<Book> ksiazki;
+    public static Ksiegarnia ksiegarnia = Ksiegarnia.getInstance();
 
-    public static void Terminal() throws IOException {
+    public static void Terminala() throws IOException {
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
 
         Screen screen = new TerminalScreen(terminal);
@@ -44,8 +45,6 @@ class Terminala {
         Panel prawy = new Panel();
         prawy.setLayoutManager(new LinearLayout(Direction.VERTICAL));
         panel.addComponent(prawy.withBorder(Borders.singleLine("Lista studentów i książek")));
-
-        Ksiegarnia ksiegarnia = Ksiegarnia.getInstance();
 
         //labele w którcyh nic nie ma aby troche uporządkować wygląd
         final Label spacja = new Label(" ");
@@ -70,6 +69,7 @@ class Terminala {
         table_student.setVisibleRows(7);
         table2_ksiazka.setVisibleRows(7);
 
+        //dwaj budowniczowie
         BuilderKsiazki builderKsiazki = new BuilderKsiazki();
         BuilderStudenci builderStudenci = new BuilderStudenci();
 

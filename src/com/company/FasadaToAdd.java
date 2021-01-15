@@ -27,11 +27,12 @@ public interface FasadaToAdd {
     int dodaj_iloscwyp_ilosc_nastanieGUI(JFrame frame);
 }
 
-//klasa która łączy wszystkie "prośby" o informacje w jedno
+//klasa która łączy wszystkie "prośby" o informacje do stworzenia nowego obiektu w jedno
 class Polacz{
     private AddStudentFasada studentFasada = new AddStudentFasada();
     private AddBookFasada bookFasada = new AddBookFasada();
 
+    //dodawanie studenta w trybie tekstowym
     public void dodajstudenta(WindowBasedTextGUI textGUI, Table<String> table_student, List<Student> dane_studentow){
         String imie = studentFasada.dodaj_imie_tytul(textGUI);
         String nazwisko = studentFasada.dodaj_nazwisko_autor(textGUI);
@@ -44,6 +45,7 @@ class Polacz{
         table_student.getTableModel().addRow(imie,nazwisko,stringindeks);
     }
 
+    //dodawanie książki w trybie tekstowym
     public void dodajksiakze(WindowBasedTextGUI textGUI, Table<String> table2_ksiazki,
                              List<Book> ksiazki, Label stanlabel,Ksiegarnia ksiegarnia){
         String tytul = bookFasada.dodaj_imie_tytul(textGUI);
@@ -71,6 +73,7 @@ class Polacz{
         }
     }
 
+    //dodawanie studenta w trybie graficznym
     public void dodajStudentaGUI(JFrame frame, List<Student> dane_studentow,DefaultListModel<String> lista){
         String imie = studentFasada.dodaj_imie_tytulGUI(frame);
         String nazwisko = studentFasada.dodaj_nazwisko_autorGUI(frame);
@@ -82,6 +85,7 @@ class Polacz{
         lista.addElement(student.toString());
     }
 
+    //dodawanie książki w trybie graficznym
     public void dodajKsiazkeGUI(JFrame frame,List<Book> ksiazki, DefaultListModel<String> lista, JLabel jLabelstan,Ksiegarnia ksiegarnia){
         String tytul = bookFasada.dodaj_imie_tytulGUI(frame);
         String autor = bookFasada.dodaj_nazwisko_autorGUI(frame);
