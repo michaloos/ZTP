@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.io.IOException;
 
-import static com.company.Swing.SwingGUI;
 
 class Terminala {
 
@@ -290,7 +289,9 @@ class Terminala {
             public void run() {
                 try {
                     terminal.close();
-                    SwingGUI();
+                    Swing swing = new Swing();
+                    Controller controller = new Controller(swing);
+                    controller.initControllerGUI();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
